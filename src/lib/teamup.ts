@@ -1,5 +1,4 @@
-import crypto from "node:crypto";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { teamMembers, teams } from "@/db/schema";

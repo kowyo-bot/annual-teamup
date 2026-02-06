@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 type Team = {
   id: string;
@@ -11,6 +10,18 @@ type Team = {
   productCount: number;
   growthCount: number;
   rootCount: number;
+};
+
+type Member = {
+  userId: string;
+  name: string;
+  roleCategory: string;
+};
+
+type Snapshot = {
+  teams: Team[];
+  myTeamId: string | null;
+  membersByTeam: Record<string, Member[]>;
 };
 
 function needText(t: Team) {
@@ -27,12 +38,38 @@ function needText(t: Team) {
   return `缺口：${parts.join("，")}`;
 }
 
-export default function LobbyClient({ teams, myTeamId }: { teams: Team[]; myTeamId: string | null }) {
-  const router = useRouter();
+export default function LobbyClient({ initial }: { initial: Snapshot }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [snap, setSnap] = useState<Snapshot>(initial);
+
+  const { teams, myTeamId, membersByTeam } = snap;
 
   const my = useMemo(() => teams.find((t) => t.id === myTeamId) ?? null, [teams, myTeamId]);
+
+  async function refreshOnce() {
+    const res = await fetch("/api/lobby", { cache: "no-store" });
+    const data = (await res.json().catch(() => null)) as any;
+    if (!res.ok || !data?.ok) return;
+    setSnap({
+      teams: data.teams,
+      myTeamId: data.myTeamId,
+      membersByTeam: data.membersByTeam ?? {},
+    });
+  }
+
+  useEffect(() => {
+    // 先拉一次最新快照
+    refreshOnce();
+
+    // 简易“准实时”：2s 轮询（后续可换 Supabase Realtime）
+    const id = setInterval(() => {
+      refreshOnce();
+    }, 2000);
+
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function join(teamId: string) {
     setBusy(teamId);
@@ -44,7 +81,7 @@ export default function LobbyClient({ teams, myTeamId }: { teams: Team[]; myTeam
       setMsg(data?.message ?? "加入失败");
       return;
     }
-    router.refresh();
+    await refreshOnce();
   }
 
   async function leave() {
@@ -57,7 +94,7 @@ export default function LobbyClient({ teams, myTeamId }: { teams: Team[]; myTeam
       setMsg(data?.message ?? "退出失败");
       return;
     }
-    router.refresh();
+    await refreshOnce();
   }
 
   return (
@@ -95,14 +132,20 @@ export default function LobbyClient({ teams, myTeamId }: { teams: Team[]; myTeam
               <div className="text-sm text-neutral-700">人数：{t.memberCount}/5</div>
               <div className="text-xs text-neutral-600">研发 {t.rndCount} · 产品 {t.productCount} · 增长 {t.growthCount} · ROOT {t.rootCount}</div>
               <div className="text-xs text-neutral-600">{needText(t)}</div>
+              <div className="text-xs text-neutral-600">
+                成员：
+                {(membersByTeam[t.id] ?? []).length
+                  ? (membersByTeam[t.id] ?? []).map((m) => `${m.name}(${m.roleCategory})`).join("，")
+                  : "（空）"}
+              </div>
 
               <div className="pt-2">
                 <button
-                  disabled={!!myTeamId || t.memberCount >= 5 || busy === t.id}
+                  disabled={!!myTeamId || t.memberCount >= 5 || busy === t.id || t.status === "locked"}
                   className="border px-3 py-2 text-sm disabled:opacity-50"
                   onClick={() => join(t.id)}
                 >
-                  {busy === t.id ? "加入中..." : myTeamId ? "已加入其它队" : "加入"}
+                  {busy === t.id ? "加入中..." : myTeamId ? "已加入其它队" : t.status === "locked" ? "已锁定" : "加入"}
                 </button>
               </div>
             </div>
