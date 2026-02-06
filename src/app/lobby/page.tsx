@@ -15,25 +15,31 @@ export default async function LobbyPage() {
   const user = await getCurrentUser();
 
   return (
-    <main className="mx-auto max-w-6xl p-6 space-y-4">
+    <main className="mx-auto max-w-6xl p-6 space-y-5">
       <div className="flex items-start justify-between gap-4">
-        <h1 className="text-xl font-semibold">实时组队大厅</h1>
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">🏮</span>
+          <h1 className="text-xl gala-heading">实时组队大厅</h1>
+        </div>
         {user ? (
-          <div className="text-sm text-neutral-600">{user.name}</div>
+          <UserCard
+            user={{
+              name: user.name,
+              employeeId: user.employeeId,
+              roleCategory: user.roleCategory,
+            }}
+          />
         ) : null}
       </div>
       {!user ? (
-        <div className="space-y-2">
-          <div className="text-sm text-neutral-600">未报名/未登录</div>
-          <Link className="underline" href="/register">
+        <div className="gala-card p-6 space-y-3">
+          <div className="gala-muted text-sm">未报名/未登录</div>
+          <Link className="gala-btn inline-block" href="/register">
             去报名
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-4 items-start">
-          <LobbyData user={user} />
-          <UserCard user={{ name: user.name, employeeId: user.employeeId, roleCategory: user.roleCategory }} />
-        </div>
+        <LobbyData user={user} />
       )}
     </main>
   );
