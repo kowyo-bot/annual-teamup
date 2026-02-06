@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #1a0a0a;
-  --foreground: #fef3e2;
-  --card-bg: rgba(40, 15, 15, 0.85);
-  --card-border: rgba(212, 160, 23, 0.3);
-  --gold: #d4a017;
-  --gold-light: #f0d060;
-  --red-primary: #dc2626;
-  --red-deep: #991b1b;
-  --red-glow: rgba(220, 38, 38, 0.15);
+  --background: #fffaf5;
+  --foreground: #3b2314;
+  --card-bg: #ffffff;
+  --card-border: rgba(200, 160, 100, 0.25);
+  --gold: #b8860b;
+  --gold-light: #d4a017;
+  --red-primary: #c53030;
+  --red-deep: #9b2c2c;
+  --red-light: #feb2b2;
 }
 
 @theme inline {
@@ -21,7 +21,7 @@
   --color-gold-light: var(--gold-light);
   --color-red-primary: var(--red-primary);
   --color-red-deep: var(--red-deep);
-  --color-red-glow: var(--red-glow);
+  --color-red-light: var(--red-light);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -33,16 +33,16 @@ body {
   min-height: 100vh;
 }
 
-/* Festive radial glow background */
+/* Subtle warm background accents */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(220, 38, 38, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 100%, rgba(212, 160, 23, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 50% at 20% 100%, rgba(212, 160, 23, 0.06) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(197, 48, 48, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 100%, rgba(184, 134, 11, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 15% 100%, rgba(184, 134, 11, 0.03) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -51,34 +51,34 @@ body::before {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 0.75rem;
-  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .gala-card:hover {
-  border-color: rgba(212, 160, 23, 0.5);
-  box-shadow: 0 0 20px rgba(212, 160, 23, 0.08);
+  border-color: rgba(184, 134, 11, 0.4);
+  box-shadow: 0 2px 12px rgba(184, 134, 11, 0.06);
 }
 
 .gala-card-highlight {
-  border-color: var(--gold) !important;
-  box-shadow: 0 0 24px rgba(212, 160, 23, 0.15);
+  border-color: var(--red-primary) !important;
+  box-shadow: 0 2px 16px rgba(197, 48, 48, 0.08);
 }
 
-/* Gold heading */
+/* Heading with red/gold gradient */
 .gala-heading {
-  background: linear-gradient(135deg, #f0d060 0%, #d4a017 50%, #f0d060 100%);
+  background: linear-gradient(135deg, #c53030 0%, #b8860b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   font-weight: 700;
 }
 
-/* Festive button */
+/* Primary button */
 .gala-btn {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-  color: #fef3e2;
-  border: 1px solid rgba(212, 160, 23, 0.4);
+  background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
+  color: #fff;
+  border: 1px solid transparent;
   border-radius: 0.5rem;
   padding: 0.5rem 1.25rem;
   font-size: 0.875rem;
@@ -88,20 +88,20 @@ body::before {
 }
 
 .gala-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  border-color: var(--gold);
-  box-shadow: 0 0 16px rgba(220, 38, 38, 0.3);
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  box-shadow: 0 2px 10px rgba(197, 48, 48, 0.2);
 }
 
 .gala-btn:disabled {
-  opacity: 0.4;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
+/* Outline button */
 .gala-btn-outline {
   background: transparent;
-  color: var(--gold);
-  border: 1px solid var(--card-border);
+  color: var(--red-primary);
+  border: 1px solid rgba(197, 48, 48, 0.3);
   border-radius: 0.5rem;
   padding: 0.5rem 1.25rem;
   font-size: 0.875rem;
@@ -110,19 +110,19 @@ body::before {
 }
 
 .gala-btn-outline:hover:not(:disabled) {
-  border-color: var(--gold);
-  background: rgba(212, 160, 23, 0.08);
+  border-color: var(--red-primary);
+  background: rgba(197, 48, 48, 0.04);
 }
 
 .gala-btn-outline:disabled {
-  opacity: 0.4;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
 /* Form inputs */
 .gala-input {
   width: 100%;
-  background: rgba(30, 10, 10, 0.8);
+  background: #fffcf8;
   border: 1px solid var(--card-border);
   border-radius: 0.5rem;
   padding: 0.625rem 0.75rem;
@@ -133,53 +133,39 @@ body::before {
 
 .gala-input:focus {
   outline: none;
-  border-color: var(--gold);
-  box-shadow: 0 0 12px rgba(212, 160, 23, 0.12);
+  border-color: var(--red-primary);
+  box-shadow: 0 0 0 3px rgba(197, 48, 48, 0.08);
 }
 
 .gala-input::placeholder {
-  color: rgba(254, 243, 226, 0.3);
+  color: rgba(59, 35, 20, 0.3);
 }
 
 /* Links */
 .gala-link {
-  color: var(--gold);
+  color: var(--red-primary);
   text-decoration: none;
-  border-bottom: 1px solid rgba(212, 160, 23, 0.3);
+  border-bottom: 1px solid rgba(197, 48, 48, 0.25);
   transition: border-color 0.2s, color 0.2s;
 }
 
 .gala-link:hover {
-  color: var(--gold-light);
-  border-bottom-color: var(--gold-light);
+  color: var(--red-deep);
+  border-bottom-color: var(--red-deep);
 }
 
-/* Subtle text */
+/* Muted text */
 .gala-muted {
-  color: rgba(254, 243, 226, 0.55);
+  color: rgba(59, 35, 20, 0.5);
 }
 
 /* Divider */
 .gala-divider {
-  border-color: rgba(212, 160, 23, 0.15);
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(26, 10, 10, 0.5);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(212, 160, 23, 0.3);
-  border-radius: 3px;
+  border-color: rgba(200, 160, 100, 0.2);
 }
 
 /* Selection */
 ::selection {
-  background: rgba(220, 38, 38, 0.3);
-  color: #fef3e2;
+  background: rgba(197, 48, 48, 0.12);
+  color: var(--foreground);
 }

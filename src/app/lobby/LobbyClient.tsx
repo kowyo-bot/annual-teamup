@@ -47,10 +47,10 @@ function needText(rnd: number, product: number, growth: number) {
 }
 
 const ROLE_BADGE: Record<string, string> = {
-  RND: "bg-blue-500/20 text-blue-300 border border-blue-500/30",
-  PRODUCT: "bg-purple-500/20 text-purple-300 border border-purple-500/30",
-  GROWTH: "bg-amber-500/20 text-amber-300 border border-amber-500/30",
-  ROOT: "bg-red-500/20 text-red-300 border border-red-500/30",
+  RND: "bg-blue-50 text-blue-700 border border-blue-200",
+  PRODUCT: "bg-purple-50 text-purple-700 border border-purple-200",
+  GROWTH: "bg-amber-50 text-amber-700 border border-amber-200",
+  ROOT: "bg-red-50 text-red-700 border border-red-200",
 };
 
 const ROLE_LABEL: Record<string, string> = {
@@ -205,11 +205,11 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="font-medium text-gold/90">在线用户</div>
+            <div className="font-medium text-foreground">在线用户</div>
             <div className="flex items-center gap-1.5">
               <span
                 className={`inline-block w-2 h-2 rounded-full ${
-                  wsConnected ? "bg-green-500 animate-pulse" : "bg-neutral-600"
+                  wsConnected ? "bg-green-500 animate-pulse" : "bg-neutral-300"
                 }`}
               />
               <span className="gala-muted text-xs">
@@ -232,7 +232,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
                     <span className="text-foreground/80">{u.name}</span>
                     <span
                       className={`px-1.5 py-0.5 rounded text-[10px] ${
-                        ROLE_BADGE[u.roleCategory] ?? "bg-neutral-700/50 text-neutral-400"
+                        ROLE_BADGE[u.roleCategory] ?? "bg-neutral-100 text-neutral-600"
                       }`}
                     >
                       {ROLE_LABEL[u.roleCategory] ?? u.roleCategory}
@@ -247,7 +247,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
 
       {/* Rules */}
       <div className="gala-card p-4 text-sm">
-        <div className="font-medium text-gold/90 mb-1">📋 组队规则</div>
+        <div className="font-medium text-foreground mb-1">📋 组队规则</div>
         <div className="gala-muted text-xs leading-relaxed">
           每队 4-5 人；研发≥2、产品≥1、增长≥1、ROOT≤1
         </div>
@@ -257,7 +257,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
       {my ? (
         <div className="gala-card gala-card-highlight p-4 text-sm flex items-center justify-between">
           <div>
-            <div className="font-medium text-gold">
+            <div className="font-medium text-red-primary">
               🎯 你当前在队伍：{my.id}
             </div>
             <div className="gala-muted text-xs mt-1">
@@ -275,7 +275,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
       )}
 
       {msg ? (
-        <div className="text-sm text-red-400 gala-card p-3">⚠ {msg}</div>
+        <div className="text-sm text-red-primary gala-card p-3 bg-red-50">⚠ {msg}</div>
       ) : null}
 
       {/* Team grid — counts reflect online members only */}
@@ -294,12 +294,12 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
               className={`gala-card p-4 space-y-2 ${isMine ? "gala-card-highlight" : ""}`}
             >
               <div className="flex items-center justify-between">
-                <div className="font-medium text-gold/90">队伍 {t.id}</div>
+                <div className="font-medium text-foreground">队伍 {t.id}</div>
                 <div
                   className={`text-[10px] px-2 py-0.5 rounded-full ${
                     t.status === "locked"
-                      ? "bg-red-500/20 text-red-300 border border-red-500/30"
-                      : "bg-green-500/15 text-green-400 border border-green-500/25"
+                      ? "bg-red-50 text-red-600 border border-red-200"
+                      : "bg-green-50 text-green-600 border border-green-200"
                   }`}
                 >
                   {t.status === "locked" ? "🔒 已锁定" : "开放中"}
@@ -309,16 +309,16 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
               <div className="text-sm gala-muted">在线人数：{om.length}/5</div>
 
               <div className="flex flex-wrap gap-1.5 text-xs">
-                <span className="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300">
+                <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700">
                   研发 {oRnd}
                 </span>
-                <span className="px-1.5 py-0.5 rounded bg-purple-500/15 text-purple-300">
+                <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700">
                   产品 {oProduct}
                 </span>
-                <span className="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300">
+                <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700">
                   增长 {oGrowth}
                 </span>
-                <span className="px-1.5 py-0.5 rounded bg-red-500/15 text-red-300">
+                <span className="px-1.5 py-0.5 rounded bg-red-50 text-red-700">
                   ROOT {oRoot}
                 </span>
               </div>
@@ -333,7 +333,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
                   ? om.map((m) => (
                       <span key={m.userId}>
                         {m.name}
-                        <span className="text-gold/50">({ROLE_LABEL[m.roleCategory] ?? m.roleCategory})</span>
+                        <span className="text-foreground/40">({ROLE_LABEL[m.roleCategory] ?? m.roleCategory})</span>
                         {" "}
                       </span>
                     ))

@@ -32,7 +32,7 @@ export default function UserCard({
       onClick={() => setExpanded(!expanded)}
     >
       <div className="flex items-center justify-between">
-        <div className="font-medium text-gold">{user.name}</div>
+        <div className="font-medium text-red-primary">{user.name}</div>
         <div className="gala-muted text-[10px]">{expanded ? "收起" : "展开"}</div>
       </div>
 
@@ -40,7 +40,7 @@ export default function UserCard({
         <div className="mt-2 space-y-1.5 pt-2 border-t gala-divider">
           <div className="gala-muted">工号: {user.employeeId}</div>
           <div className="gala-muted">
-            角色: <span className="text-gold/80">{ROLE_LABEL[user.roleCategory] ?? user.roleCategory}</span>
+            角色: <span className="text-foreground/70">{ROLE_LABEL[user.roleCategory] ?? user.roleCategory}</span>
           </div>
           <div className="pt-2">
             <button

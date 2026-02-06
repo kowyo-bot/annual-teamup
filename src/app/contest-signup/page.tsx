@@ -25,8 +25,8 @@ export default async function ContestSignupPage() {
             <p className="gala-muted text-sm">
               说明：此处不披露具体流程设计和题目，仅完成预报名与组队。
             </p>
-            <div className="gala-card p-3 text-sm">
-              <span className="text-gold text-xs font-medium">组队规则</span>
+            <div className="rounded-lg bg-red-primary/5 border border-red-primary/10 p-3 text-sm">
+              <span className="text-red-primary text-xs font-medium">组队规则</span>
               <p className="gala-muted text-xs mt-1">
                 4-5 人；研发≥2、产品≥1、增长≥1、ROOT≤1
               </p>

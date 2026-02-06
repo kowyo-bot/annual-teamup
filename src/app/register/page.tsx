@@ -46,7 +46,7 @@ export default function RegisterPage() {
 
         <form className="gala-card p-6 space-y-4" onSubmit={onSubmit}>
           <div className="space-y-1.5">
-            <label className="text-sm text-gold/80">姓名</label>
+            <label className="text-sm font-medium text-foreground/70">姓名</label>
             <input
               className="gala-input"
               value={name}
@@ -57,7 +57,7 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-sm text-gold/80">工号 / ID</label>
+            <label className="text-sm font-medium text-foreground/70">工号 / ID</label>
             <input
               className="gala-input"
               value={employeeId}
@@ -68,7 +68,7 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-sm text-gold/80">角色</label>
+            <label className="text-sm font-medium text-foreground/70">角色</label>
             <select
               className="gala-input"
               value={roleCategory}

@@ -16,9 +16,9 @@ export default function Home() {
 
         {/* Decorative divider */}
         <div className="flex items-center justify-center gap-3">
-          <div className="h-px w-16 bg-linear-to-r from-transparent to-gold/30" />
-          <div className="text-gold/50 text-xs">✦</div>
-          <div className="h-px w-16 bg-linear-to-l from-transparent to-gold/30" />
+          <div className="h-px w-16 bg-linear-to-r from-transparent to-red-primary/20" />
+          <div className="text-red-primary/40 text-xs">✦</div>
+          <div className="h-px w-16 bg-linear-to-l from-transparent to-red-primary/20" />
         </div>
 
         <div className="flex flex-col items-center gap-3">

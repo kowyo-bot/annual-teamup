@@ -22,7 +22,7 @@ export default async function AnnualMeetingPage() {
         ) : (
           <div className="gala-card p-6 space-y-5">
             <div className="text-sm">
-              你好，<span className="text-gold font-medium">{user.name}</span>
+              你好，<span className="text-red-primary font-medium">{user.name}</span>
               <span className="gala-muted">（{user.employeeId}）</span>
             </div>
 
