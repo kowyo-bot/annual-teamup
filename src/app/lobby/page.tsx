@@ -7,6 +7,7 @@ import { ensureDefaultTeams, getMyTeamId } from "@/lib/teamup";
 import { eq } from "drizzle-orm";
 
 import LobbyClient from "./LobbyClient";
+import UserCard from "./UserCard";
 
 export const dynamic = "force-dynamic";
 
@@ -14,8 +15,13 @@ export default async function LobbyPage() {
   const user = await getCurrentUser();
 
   return (
-    <main className="mx-auto max-w-5xl p-6 space-y-4">
-      <h1 className="text-xl font-semibold">实时组队大厅</h1>
+    <main className="mx-auto max-w-6xl p-6 space-y-4">
+      <div className="flex items-start justify-between gap-4">
+        <h1 className="text-xl font-semibold">实时组队大厅</h1>
+        {user ? (
+          <div className="text-sm text-neutral-600">{user.name}</div>
+        ) : null}
+      </div>
       {!user ? (
         <div className="space-y-2">
           <div className="text-sm text-neutral-600">未注册/未登录</div>
@@ -24,13 +30,16 @@ export default async function LobbyPage() {
           </Link>
         </div>
       ) : (
-        <LobbyData userId={user.id} />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-4 items-start">
+          <LobbyData user={user} />
+          <UserCard user={{ name: user.name, employeeId: user.employeeId, roleCategory: user.roleCategory }} />
+        </div>
       )}
     </main>
   );
 }
 
-async function LobbyData({ userId }: { userId: string }) {
+async function LobbyData({ user }: { user: { id: string; name: string; employeeId: string; roleCategory: string } }) {
   const db = requireDb();
   await ensureDefaultTeams(db);
 
@@ -47,7 +56,7 @@ async function LobbyData({ userId }: { userId: string }) {
     .from(teams)
     .orderBy(teams.id);
 
-  const myTeamId = await getMyTeamId(db, userId);
+  const myTeamId = await getMyTeamId(db, user.id);
 
   const members = await db
     .select({
@@ -75,6 +84,7 @@ async function LobbyData({ userId }: { userId: string }) {
   return (
     <LobbyClient
       initial={{
+        user: { name: user.name, employeeId: user.employeeId, roleCategory: user.roleCategory },
         teams: list as any,
         myTeamId,
         membersByTeam,

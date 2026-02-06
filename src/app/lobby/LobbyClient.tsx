@@ -19,6 +19,7 @@ type Member = {
 };
 
 type Snapshot = {
+  user: { name: string; employeeId: string; roleCategory: string };
   teams: Team[];
   myTeamId: string | null;
   membersByTeam: Record<string, Member[]>;
@@ -43,7 +44,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
   const [msg, setMsg] = useState<string | null>(null);
   const [snap, setSnap] = useState<Snapshot>(initial);
 
-  const { teams, myTeamId, membersByTeam } = snap;
+  const { user, teams, myTeamId, membersByTeam } = snap;
 
   const my = useMemo(() => teams.find((t) => t.id === myTeamId) ?? null, [teams, myTeamId]);
 
@@ -52,6 +53,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
     const data = (await res.json().catch(() => null)) as any;
     if (!res.ok || !data?.ok) return;
     setSnap({
+      user: data.user,
       teams: data.teams,
       myTeamId: data.myTeamId,
       membersByTeam: data.membersByTeam ?? {},
