@@ -57,6 +57,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [snap, setSnap] = useState<Snapshot>(initial);
+  const [onlineExpanded, setOnlineExpanded] = useState(false);
 
   const { teams, myTeamId, membersByTeam } = snap;
 
@@ -191,38 +192,48 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
   return (
     <div className="space-y-3">
       {/* Online users bar */}
-      <div className="rounded border p-3 text-sm space-y-2">
+      <div
+        className="rounded border p-3 text-sm space-y-2 cursor-pointer hover:bg-neutral-100 transition-colors"
+        onClick={() => setOnlineExpanded(!onlineExpanded)}
+      >
         <div className="flex items-center justify-between">
-          <div className="font-medium">在线用户</div>
-          <div className="flex items-center gap-1.5">
-            <span
-              className={`inline-block w-2 h-2 rounded-full ${
-                wsConnected ? "bg-green-500 animate-pulse" : "bg-neutral-300"
-              }`}
-            />
-            <span className="text-xs text-neutral-500">
-              {wsConnected ? `${onlineUsers.length} 人在线` : "连接中..."}
-            </span>
+          <div className="flex items-center gap-2">
+            <div className="font-medium">在线用户</div>
+            <div className="flex items-center gap-1.5">
+              <span
+                className={`inline-block w-2 h-2 rounded-full ${
+                  wsConnected ? "bg-green-500 animate-pulse" : "bg-neutral-300"
+                }`}
+              />
+              <span className="text-xs text-neutral-500">
+                {wsConnected ? `${onlineUsers.length} 人在线` : "连接中..."}
+              </span>
+            </div>
           </div>
+          <div className="text-neutral-400 text-[10px]">{onlineExpanded ? "收起" : "展开"}</div>
         </div>
 
-        {onlineUsers.length === 0 ? (
-          <div className="text-neutral-400 text-xs">暂无在线用户</div>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {onlineUsers.map((u) => (
-              <span key={u.userId} className="inline-flex items-center gap-1 text-xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
-                {u.name}
-                <span
-                  className={`px-1 py-0.5 rounded text-[10px] ${
-                    ROLE_BADGE[u.roleCategory] ?? "bg-neutral-100 text-neutral-600"
-                  }`}
-                >
-                  {u.roleCategory}
-                </span>
-              </span>
-            ))}
+        {onlineExpanded && (
+          <div className="pt-2 border-t border-neutral-100">
+            {onlineUsers.length === 0 ? (
+              <div className="text-neutral-400 text-xs">暂无在线用户</div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {onlineUsers.map((u) => (
+                  <span key={u.userId} className="inline-flex items-center gap-1 text-xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+                    {u.name}
+                    <span
+                      className={`px-1 py-0.5 rounded text-[10px] ${
+                        ROLE_BADGE[u.roleCategory] ?? "bg-neutral-100 text-neutral-600"
+                      }`}
+                    >
+                      {u.roleCategory}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -231,7 +242,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
       <div className="rounded border p-3 text-sm">
         <div className="font-medium">规则</div>
         <div className="text-neutral-600">
-          每队 4-5 人；研发≥2、产品≥1、增长≥1、ROOT≤1（ROOT 强制打散）。
+          每队 4-5 人；研发≥2、产品≥1、增长≥1、ROOT≤1
         </div>
       </div>
 

@@ -19,7 +19,13 @@ export default async function LobbyPage() {
       <div className="flex items-start justify-between gap-4">
         <h1 className="text-xl font-semibold">实时组队大厅</h1>
         {user ? (
-          <div className="text-sm text-neutral-600">{user.name}</div>
+          <UserCard
+            user={{
+              name: user.name,
+              employeeId: user.employeeId,
+              roleCategory: user.roleCategory,
+            }}
+          />
         ) : null}
       </div>
       {!user ? (
@@ -30,10 +36,7 @@ export default async function LobbyPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-4 items-start">
-          <LobbyData user={user} />
-          <UserCard user={{ name: user.name, employeeId: user.employeeId, roleCategory: user.roleCategory }} />
-        </div>
+        <LobbyData user={user} />
       )}
     </main>
   );
