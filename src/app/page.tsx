@@ -6,9 +6,6 @@ export default function Home() {
       <h1 className="text-2xl font-semibold">TeamUp</h1>
       <p className="text-sm text-neutral-600">年会报名 → 比赛报名 → 实时组队大厅</p>
       <div className="flex gap-3">
-        <Link className="underline" href="/register">
-          注册
-        </Link>
         <Link className="underline" href="/annual-meeting">
           年会报名
         </Link>

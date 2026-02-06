@@ -11,9 +11,9 @@ export default async function AnnualMeetingPage() {
       <h1 className="text-xl font-semibold">年会报名</h1>
       {!user ? (
         <div className="space-y-2">
-          <div className="text-sm text-neutral-600">未注册/未登录</div>
+          <div className="text-sm text-neutral-600">未报名/未登录</div>
           <Link className="underline" href="/register">
-            去注册
+            去报名
           </Link>
         </div>
       ) : (

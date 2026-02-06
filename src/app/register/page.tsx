@@ -26,7 +26,7 @@ export default function RegisterPage() {
     setLoading(false);
 
     if (!res.ok) {
-      setMsg(data?.message ?? "注册失败");
+      setMsg(data?.message ?? "报名失败");
       return;
     }
 
@@ -35,8 +35,10 @@ export default function RegisterPage() {
 
   return (
     <main className="mx-auto max-w-md p-6 space-y-4">
-      <h1 className="text-xl font-semibold">注册</h1>
-      <p className="text-sm text-neutral-600">输入姓名、工号、角色后即可进入实时组队大厅。</p>
+      <h1 className="text-xl font-semibold">年会报名</h1>
+      <p className="text-sm text-neutral-600">
+        输入姓名、工号、角色后即可完成年会报名并进入实时组队大厅。
+      </p>
 
       <form className="space-y-3" onSubmit={onSubmit}>
         <div className="space-y-1">
@@ -76,7 +78,7 @@ export default function RegisterPage() {
         </div>
 
         <button disabled={loading} className="border px-3 py-2">
-          {loading ? "提交中..." : "进入大厅"}
+          {loading ? "报名中..." : "完成报名并进入大厅"}
         </button>
 
         {msg ? <div className="text-sm text-red-600">{msg}</div> : null}
