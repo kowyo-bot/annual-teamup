@@ -22,9 +22,6 @@ export default async function ContestSignupPage() {
           </div>
         ) : (
           <div className="gala-card p-6 space-y-4 text-left">
-            <p className="gala-muted text-sm">
-              说明：此处不披露具体流程设计和题目，仅完成预报名与组队。
-            </p>
             <div className="rounded-lg bg-red-primary/5 border border-red-primary/10 p-3 text-sm">
               <span className="text-red-primary text-xs font-medium">组队规则</span>
               <p className="gala-muted text-xs mt-1">
