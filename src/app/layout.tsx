@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DeepWisdom 年会",
-  description: "DeepWisdom 年会组队大厅",
+  title: "年会组队系统",
+  description: "年会编程比赛报名与实时组队平台",
 };
 
 export default function RootLayout({
@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="zh-CN">
       <head>
         {process.env.NODE_ENV === "development" && (
           <Script

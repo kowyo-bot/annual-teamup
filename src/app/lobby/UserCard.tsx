@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 
+const ROLE_LABEL: Record<string, string> = {
+  RND: "研发",
+  PRODUCT: "产品",
+  GROWTH: "增长",
+  ROOT: "ROOT",
+};
+
 export default function UserCard({
   user,
 }: {
@@ -21,22 +28,24 @@ export default function UserCard({
 
   return (
     <div
-      className="rounded border p-3 text-sm min-w-[220px] cursor-pointer"
+      className="gala-card p-3 text-sm min-w-[220px] cursor-pointer"
       onClick={() => setExpanded(!expanded)}
     >
       <div className="flex items-center justify-between">
-        <div className="font-medium">{user.name}</div>
-        <div className="text-neutral-400 text-[10px]">{expanded ? "收起" : "展开"}</div>
+        <div className="font-medium text-gold">{user.name}</div>
+        <div className="gala-muted text-[10px]">{expanded ? "收起" : "展开"}</div>
       </div>
 
       {expanded && (
-        <div className="mt-2 space-y-1 pt-2 border-t border-neutral-100">
-          <div className="text-neutral-600">工号: {user.employeeId}</div>
-          <div className="text-neutral-600">角色: {user.roleCategory}</div>
+        <div className="mt-2 space-y-1.5 pt-2 border-t gala-divider">
+          <div className="gala-muted">工号: {user.employeeId}</div>
+          <div className="gala-muted">
+            角色: <span className="text-gold/80">{ROLE_LABEL[user.roleCategory] ?? user.roleCategory}</span>
+          </div>
           <div className="pt-2">
             <button
               disabled={loading}
-              className="border px-3 py-1 text-xs"
+              className="gala-btn-outline text-xs py-1! px-3!"
               onClick={(e) => {
                 e.stopPropagation();
                 logout();

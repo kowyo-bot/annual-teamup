@@ -42,15 +42,22 @@ function needText(rnd: number, product: number, growth: number) {
   if (needP) parts.push(`产品+${needP}`);
   if (needG) parts.push(`增长+${needG}`);
 
-  if (!parts.length) return "构成已满足（可补第 5 人）";
+  if (!parts.length) return "✅ 构成已满足（可补第 5 人）";
   return `缺口：${parts.join("，")}`;
 }
 
 const ROLE_BADGE: Record<string, string> = {
-  RND: "bg-blue-100 text-blue-700",
-  PRODUCT: "bg-purple-100 text-purple-700",
-  GROWTH: "bg-amber-100 text-amber-700",
-  ROOT: "bg-red-100 text-red-700",
+  RND: "bg-blue-500/20 text-blue-300 border border-blue-500/30",
+  PRODUCT: "bg-purple-500/20 text-purple-300 border border-purple-500/30",
+  GROWTH: "bg-amber-500/20 text-amber-300 border border-amber-500/30",
+  ROOT: "bg-red-500/20 text-red-300 border border-red-500/30",
+};
+
+const ROLE_LABEL: Record<string, string> = {
+  RND: "研发",
+  PRODUCT: "产品",
+  GROWTH: "增长",
+  ROOT: "ROOT",
 };
 
 export default function LobbyClient({ initial }: { initial: Snapshot }) {
@@ -190,45 +197,45 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
   // --------------- Render ---------------
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {/* Online users bar */}
       <div
-        className="rounded border p-3 text-sm space-y-2 cursor-pointer"
+        className="gala-card p-4 text-sm space-y-2 cursor-pointer"
         onClick={() => setOnlineExpanded(!onlineExpanded)}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="font-medium">在线用户</div>
+            <div className="font-medium text-gold/90">在线用户</div>
             <div className="flex items-center gap-1.5">
               <span
                 className={`inline-block w-2 h-2 rounded-full ${
-                  wsConnected ? "bg-green-500 animate-pulse" : "bg-neutral-300"
+                  wsConnected ? "bg-green-500 animate-pulse" : "bg-neutral-600"
                 }`}
               />
-              <span className="text-xs text-neutral-500">
+              <span className="gala-muted text-xs">
                 {wsConnected ? `${onlineUsers.length} 人在线` : "连接中..."}
               </span>
             </div>
           </div>
-          <div className="text-neutral-400 text-[10px]">{onlineExpanded ? "收起" : "展开"}</div>
+          <div className="gala-muted text-[10px]">{onlineExpanded ? "收起" : "展开"}</div>
         </div>
 
         {onlineExpanded && (
-          <div className="pt-2 border-t border-neutral-100">
+          <div className="pt-2 border-t gala-divider">
             {onlineUsers.length === 0 ? (
-              <div className="text-neutral-400 text-xs">暂无在线用户</div>
+              <div className="gala-muted text-xs">暂无在线用户</div>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {onlineUsers.map((u) => (
                   <span key={u.userId} className="inline-flex items-center gap-1 text-xs">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
-                    {u.name}
+                    <span className="text-foreground/80">{u.name}</span>
                     <span
-                      className={`px-1 py-0.5 rounded text-[10px] ${
-                        ROLE_BADGE[u.roleCategory] ?? "bg-neutral-100 text-neutral-600"
+                      className={`px-1.5 py-0.5 rounded text-[10px] ${
+                        ROLE_BADGE[u.roleCategory] ?? "bg-neutral-700/50 text-neutral-400"
                       }`}
                     >
-                      {u.roleCategory}
+                      {ROLE_LABEL[u.roleCategory] ?? u.roleCategory}
                     </span>
                   </span>
                 ))}
@@ -239,36 +246,40 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
       </div>
 
       {/* Rules */}
-      <div className="rounded border p-3 text-sm">
-        <div className="font-medium">规则</div>
-        <div className="text-neutral-600">
+      <div className="gala-card p-4 text-sm">
+        <div className="font-medium text-gold/90 mb-1">📋 组队规则</div>
+        <div className="gala-muted text-xs leading-relaxed">
           每队 4-5 人；研发≥2、产品≥1、增长≥1、ROOT≤1
         </div>
       </div>
 
       {/* My team */}
       {my ? (
-        <div className="rounded border p-3 text-sm flex items-center justify-between">
+        <div className="gala-card gala-card-highlight p-4 text-sm flex items-center justify-between">
           <div>
-            <div className="font-medium">你当前在队伍：{my.id}</div>
-            <div className="text-neutral-600">
+            <div className="font-medium text-gold">
+              🎯 你当前在队伍：{my.id}
+            </div>
+            <div className="gala-muted text-xs mt-1">
               {needText(my.rndCount, my.productCount, my.growthCount)}；在线人数：{my.memberCount}
             </div>
           </div>
-          <button disabled={busy === "leave"} className="border px-3 py-2" onClick={leave}>
+          <button disabled={busy === "leave"} className="gala-btn-outline" onClick={leave}>
             {busy === "leave" ? "处理中..." : "退出队伍"}
           </button>
         </div>
       ) : (
-        <div className="text-sm text-neutral-600">
+        <div className="gala-card p-4 text-sm gala-muted">
           你还没加入队伍，选择下面任意队伍加入（先到先得）。
         </div>
       )}
 
-      {msg ? <div className="text-sm text-red-600">{msg}</div> : null}
+      {msg ? (
+        <div className="text-sm text-red-400 gala-card p-3">⚠ {msg}</div>
+      ) : null}
 
       {/* Team grid — counts reflect online members only */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {teams.map((t) => {
           const isMine = t.id === myTeamId;
           const om = onlineMembersByTeam[t.id] ?? [];
@@ -280,36 +291,61 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
           return (
             <div
               key={t.id}
-              className={`rounded border p-3 space-y-1 ${isMine ? "border-black" : ""}`}
+              className={`gala-card p-4 space-y-2 ${isMine ? "gala-card-highlight" : ""}`}
             >
               <div className="flex items-center justify-between">
-                <div className="font-medium">队伍 {t.id}</div>
-                <div className="text-xs text-neutral-500">{t.status}</div>
+                <div className="font-medium text-gold/90">队伍 {t.id}</div>
+                <div
+                  className={`text-[10px] px-2 py-0.5 rounded-full ${
+                    t.status === "locked"
+                      ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                      : "bg-green-500/15 text-green-400 border border-green-500/25"
+                  }`}
+                >
+                  {t.status === "locked" ? "🔒 已锁定" : "开放中"}
+                </div>
               </div>
 
-              <div className="text-sm text-neutral-700">在线人数：{om.length}/5</div>
+              <div className="text-sm gala-muted">在线人数：{om.length}/5</div>
 
-              <div className="text-xs text-neutral-600">
-                研发 {oRnd} · 产品 {oProduct} · 增长 {oGrowth} · ROOT {oRoot}
+              <div className="flex flex-wrap gap-1.5 text-xs">
+                <span className="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300">
+                  研发 {oRnd}
+                </span>
+                <span className="px-1.5 py-0.5 rounded bg-purple-500/15 text-purple-300">
+                  产品 {oProduct}
+                </span>
+                <span className="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300">
+                  增长 {oGrowth}
+                </span>
+                <span className="px-1.5 py-0.5 rounded bg-red-500/15 text-red-300">
+                  ROOT {oRoot}
+                </span>
               </div>
 
-              <div className="text-xs text-neutral-600">
+              <div className="text-xs gala-muted">
                 {needText(oRnd, oProduct, oGrowth)}
               </div>
 
-              <div className="text-xs text-neutral-600">
+              <div className="text-xs gala-muted">
                 在线成员：
                 {om.length
-                  ? om.map((m) => `${m.name}(${m.roleCategory})`).join("，")
+                  ? om.map((m) => (
+                      <span key={m.userId}>
+                        {m.name}
+                        <span className="text-gold/50">({ROLE_LABEL[m.roleCategory] ?? m.roleCategory})</span>
+                        {" "}
+                      </span>
+                    ))
                   : "（无人在线）"}
               </div>
 
-              <div className="pt-2">
+              <div className="pt-1">
                 <button
                   disabled={
                     !!myTeamId || t.memberCount >= 5 || busy === t.id || t.status === "locked"
                   }
-                  className="border px-3 py-2 text-sm disabled:opacity-50"
+                  className="gala-btn text-xs"
                   onClick={() => join(t.id)}
                 >
                   {busy === t.id
@@ -318,7 +354,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
                       ? "已加入其它队"
                       : t.status === "locked"
                         ? "已锁定"
-                        : "加入"}
+                        : "加入队伍"}
                 </button>
               </div>
             </div>
