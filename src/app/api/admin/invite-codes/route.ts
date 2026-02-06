@@ -53,7 +53,6 @@ export async function POST(req: Request) {
       })),
     )
     // ignore conflicts so we can retry
-    // @ts-expect-error drizzle supports this for pg
     .onConflictDoNothing();
 
   return NextResponse.json({ ok: true, codes });
