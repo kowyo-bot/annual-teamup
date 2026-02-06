@@ -12,8 +12,8 @@ export default async function ContestSignupPage() {
       {!user ? (
         <div className="space-y-2">
           <div className="text-sm text-neutral-600">未登录</div>
-          <Link className="underline" href="/login">
-            去登录
+          <Link className="underline" href="/register">
+            去注册
           </Link>
         </div>
       ) : (

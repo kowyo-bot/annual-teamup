@@ -8,6 +8,9 @@ export default function Home() {
         年会报名 → 比赛报名 → 实时组队大厅（不公开题目/流程细节）
       </p>
       <div className="flex gap-3">
+        <Link className="underline" href="/register">
+          注册
+        </Link>
         <Link className="underline" href="/annual-meeting">
           年会报名
         </Link>

@@ -1,5 +1,11 @@
 import Link from "next/link";
+
+import { requireDb } from "@/db";
+import { teams } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
+import { ensureDefaultTeams, getMyTeamId } from "@/lib/teamup";
+
+import LobbyClient from "./LobbyClient";
 
 export const dynamic = "force-dynamic";
 
@@ -7,23 +13,40 @@ export default async function LobbyPage() {
   const user = await getCurrentUser();
 
   return (
-    <main className="mx-auto max-w-2xl p-6 space-y-4">
+    <main className="mx-auto max-w-5xl p-6 space-y-4">
       <h1 className="text-xl font-semibold">实时组队大厅</h1>
       {!user ? (
         <div className="space-y-2">
-          <div className="text-sm text-neutral-600">未登录</div>
-          <Link className="underline" href="/login">
-            去登录
+          <div className="text-sm text-neutral-600">未注册/未登录</div>
+          <Link className="underline" href="/register">
+            去注册
           </Link>
         </div>
       ) : (
-        <div className="space-y-3">
-          <div className="text-sm">已登录：{user.name}（{user.roleCategory}）</div>
-          <div className="rounded border p-3 text-sm text-neutral-600">
-            MVP 下一步实现：创建队伍 / 加入队伍（事务 + 并发锁）/ 退出队伍 / 实时更新。
-          </div>
-        </div>
+        <LobbyData userId={user.id} />
       )}
     </main>
   );
+}
+
+async function LobbyData({ userId }: { userId: string }) {
+  const db = requireDb();
+  await ensureDefaultTeams(db);
+
+  const list = await db
+    .select({
+      id: teams.id,
+      status: teams.status,
+      memberCount: teams.memberCount,
+      rndCount: teams.rndCount,
+      productCount: teams.productCount,
+      growthCount: teams.growthCount,
+      rootCount: teams.rootCount,
+    })
+    .from(teams)
+    .orderBy(teams.id);
+
+  const myTeamId = await getMyTeamId(db, userId);
+
+  return <LobbyClient teams={list as any} myTeamId={myTeamId} />;
 }
