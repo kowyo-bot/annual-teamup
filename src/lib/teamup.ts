@@ -48,20 +48,6 @@ export function canJoinTeam(current: TeamCounts, role: Role) {
   if (next.memberCount > 5) return { ok: false as const, message: "队伍已满" };
   if (next.rootCount > 1) return { ok: false as const, message: "ROOT 需要打散（每队最多 1 个）" };
 
-  const slots = 5 - next.memberCount;
-  const need =
-    Math.max(0, 2 - next.rndCount) +
-    Math.max(0, 1 - next.productCount) +
-    Math.max(0, 1 - next.growthCount);
-
-  if (need > slots) {
-    return { ok: false as const, message: "该队伍已无法满足人员构成要求" };
-  }
-
-  if (next.memberCount === 5 && need !== 0) {
-    return { ok: false as const, message: "满员后必须满足构成要求" };
-  }
-
   return { ok: true as const, next };
 }
 
