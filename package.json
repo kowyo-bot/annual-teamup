@@ -3,34 +3,31 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "tsx server.mts",
+    "dev": "next dev",
     "build": "next build",
-    "start": "NODE_ENV=production tsx server.mts",
+    "start": "next start",
     "lint": "eslint",
     "db:generate": "bash -lc 'set -a; [ -f .env.local ] && source .env.local; set +a; drizzle-kit generate'",
     "db:migrate": "bash -lc 'set -a; [ -f .env.local ] && source .env.local; set +a; drizzle-kit migrate'"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.95.3",
     "dotenv": "^17.2.4",
     "drizzle-orm": "^0.45.1",
     "next": "16.1.6",
     "postgres": "^3.4.8",
     "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "ws": "^8.19.0"
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/ws": "^8.18.1",
     "drizzle-kit": "^0.31.8",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
-    "react-grab": "^0.1.13",
     "tailwindcss": "^4",
-    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }
