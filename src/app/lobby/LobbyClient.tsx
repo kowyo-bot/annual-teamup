@@ -193,7 +193,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
     <div className="space-y-3">
       {/* Online users bar */}
       <div
-        className="rounded border p-3 text-sm space-y-2 cursor-pointer hover:bg-neutral-100 transition-colors"
+        className="rounded border p-3 text-sm space-y-2 cursor-pointer"
         onClick={() => setOnlineExpanded(!onlineExpanded)}
       >
         <div className="flex items-center justify-between">

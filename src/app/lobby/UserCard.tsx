@@ -21,7 +21,7 @@ export default function UserCard({
 
   return (
     <div
-      className="rounded border p-3 text-sm min-w-[220px] cursor-pointer hover:bg-neutral-100 transition-colors"
+      className="rounded border p-3 text-sm min-w-[220px] cursor-pointer"
       onClick={() => setExpanded(!expanded)}
     >
       <div className="flex items-center justify-between">
@@ -36,7 +36,7 @@ export default function UserCard({
           <div className="pt-2">
             <button
               disabled={loading}
-              className="border px-3 py-1 text-xs hover:bg-neutral-50"
+              className="border px-3 py-1 text-xs"
               onClick={(e) => {
                 e.stopPropagation();
                 logout();
