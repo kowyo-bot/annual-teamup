@@ -7,6 +7,7 @@ import { ensureDefaultTeams, getMyTeamId } from "@/lib/teamup";
 import { eq } from "drizzle-orm";
 
 import LobbyClient from "./LobbyClient";
+import OnlineUsers from "./OnlineUsers";
 import UserCard from "./UserCard";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +33,10 @@ export default async function LobbyPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-4 items-start">
           <LobbyData user={user} />
-          <UserCard user={{ name: user.name, employeeId: user.employeeId, roleCategory: user.roleCategory }} />
+          <div className="space-y-4">
+            <UserCard user={{ name: user.name, employeeId: user.employeeId, roleCategory: user.roleCategory }} />
+            <OnlineUsers />
+          </div>
         </div>
       )}
     </main>
