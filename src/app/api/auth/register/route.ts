@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { requireDb } from "@/db";
-import { sessions, users } from "@/db/schema";
+import { annualMeetingRegistrations, sessions, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { setSessionCookie } from "@/lib/auth";
 
@@ -52,6 +52,12 @@ export async function POST(req: Request) {
     const expiresAt = new Date(Date.now() + maxAgeSeconds * 1000);
 
     await tx.insert(sessions).values({ token, userId, expiresAt });
+
+    // Auto-register for annual meeting
+    await tx
+      .insert(annualMeetingRegistrations)
+      .values({ userId, attending: true })
+      .onConflictDoNothing();
 
     return { ok: true as const, token, maxAgeSeconds };
   });

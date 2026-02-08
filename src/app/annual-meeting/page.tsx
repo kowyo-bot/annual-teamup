@@ -1,10 +1,23 @@
 import Link from "next/link";
+import { eq } from "drizzle-orm";
+
+import { requireDb } from "@/db";
+import { annualMeetingRegistrations } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
+import AnnualMeetingClient from "./AnnualMeetingClient";
 
 export const dynamic = "force-dynamic";
 
 export default async function AnnualMeetingPage() {
   const user = await getCurrentUser();
+  const db = user ? requireDb() : null;
+  const [registration] = user
+    ? await db!
+        .select({ attending: annualMeetingRegistrations.attending })
+        .from(annualMeetingRegistrations)
+        .where(eq(annualMeetingRegistrations.userId, user.id))
+        .limit(1)
+    : [];
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
@@ -25,6 +38,8 @@ export default async function AnnualMeetingPage() {
               你好，<span className="text-red-primary font-medium">{user.name}</span>
               <span className="gala-muted">（{user.employeeId}）</span>
             </div>
+
+            <AnnualMeetingClient initialRegistered={!!registration?.attending} />
 
             <div className="flex items-center justify-center gap-4">
               <Link className="gala-btn inline-block" href="/contest-signup">
