@@ -48,6 +48,34 @@ function needText(rnd: number, product: number, growth: number) {
   return `缺口：${parts.join("，")}`;
 }
 
+/** Client-side composition check based on online members only */
+function canJoinOnline(
+  onlineMembers: Member[],
+  joinerRole: string,
+): { ok: true } | { ok: false; message: string } {
+  const rnd = onlineMembers.filter((m) => m.roleCategory === "RND").length + (joinerRole === "RND" ? 1 : 0);
+  const product = onlineMembers.filter((m) => m.roleCategory === "PRODUCT").length + (joinerRole === "PRODUCT" ? 1 : 0);
+  const growth = onlineMembers.filter((m) => m.roleCategory === "GROWTH").length + (joinerRole === "GROWTH" ? 1 : 0);
+  const root = onlineMembers.filter((m) => m.roleCategory === "ROOT").length + (joinerRole === "ROOT" ? 1 : 0);
+  const total = onlineMembers.length + 1;
+
+  if (total > 5) return { ok: false, message: "在线人数已达 5 人上限" };
+  if (root > 1) return { ok: false, message: "ROOT 需要打散（每队最多 1 个）" };
+
+  const slots = 5 - total;
+  const need = Math.max(0, 2 - rnd) + Math.max(0, 1 - product) + Math.max(0, 1 - growth);
+
+  if (need > slots) {
+    return { ok: false, message: "加入后在线人员将无法满足构成要求" };
+  }
+
+  if (total === 5 && need !== 0) {
+    return { ok: false, message: "在线满 5 人时必须满足构成要求" };
+  }
+
+  return { ok: true };
+}
+
 const ROLE_BADGE: Record<string, string> = {
   RND: "bg-blue-50 text-blue-700 border border-blue-200",
   PRODUCT: "bg-purple-50 text-purple-700 border border-purple-200",
@@ -158,6 +186,16 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
   async function join(teamId: string) {
     setBusy(teamId);
     setMsg(null);
+
+    // Client-side composition check based on online members
+    const om = onlineMembersByTeam[teamId] ?? [];
+    const check = canJoinOnline(om, user.roleCategory);
+    if (!check.ok) {
+      setBusy(null);
+      setMsg(check.message);
+      return;
+    }
+
     const res = await fetch(`/api/teams/${teamId}/join`, { method: "POST" });
     const data = await res.json().catch(() => ({}));
     setBusy(null);
