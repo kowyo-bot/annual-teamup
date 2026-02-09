@@ -35,20 +35,6 @@ type Snapshot = {
   membersByTeam: Record<string, Member[]>;
 };
 
-function needText(rnd: number, product: number, growth: number) {
-  const needRnd = Math.max(0, 2 - rnd);
-  const needP = Math.max(0, 1 - product);
-  const needG = Math.max(0, 1 - growth);
-
-  const parts: string[] = [];
-  if (needRnd) parts.push(`研发+${needRnd}`);
-  if (needP) parts.push(`产品+${needP}`);
-  if (needG) parts.push(`增长+${needG}`);
-
-  if (!parts.length) return "✅ 构成已满足（可补第 5 人）";
-  return `缺口：${parts.join("，")}`;
-}
-
 /** Client-side composition check based on online members only */
 function canJoinOnline(
   onlineMembers: Member[],
@@ -264,7 +250,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
               🎯 你当前在队伍：{my.id}
             </div>
             <div className="gala-muted text-xs mt-1">
-              {needText(my.rndCount, my.productCount, my.growthCount)}；人数：{(membersByTeam[my.id] ?? []).length}
+              人数：{(membersByTeam[my.id] ?? []).length}
             </div>
           </div>
           <button disabled={busy === "leave"} className="gala-btn-outline" onClick={leave}>
@@ -281,7 +267,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
         <div className="text-sm text-red-primary gala-card p-3 bg-red-50">⚠ {msg}</div>
       ) : null}
 
-      {/* Team grid — counts reflect online members only */}
+      {/* Team grid — counts reflect all signed-up members */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {teams.map((t) => {
           const isMine = t.id === myTeamId;
@@ -294,10 +280,11 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
                 ? 1
                 : -1
           );
-          const oRnd = om.filter((m) => m.roleCategory === "RND").length;
-          const oProduct = om.filter((m) => m.roleCategory === "PRODUCT").length;
-          const oGrowth = om.filter((m) => m.roleCategory === "GROWTH").length;
-          const oRoot = om.filter((m) => m.roleCategory === "ROOT").length;
+          const oRnd = allMembers.filter((m) => m.roleCategory === "RND").length;
+          const oProduct = allMembers.filter((m) => m.roleCategory === "PRODUCT").length;
+          const oGrowth = allMembers.filter((m) => m.roleCategory === "GROWTH").length;
+          const oRoot = allMembers.filter((m) => m.roleCategory === "ROOT").length;
+          const oFunction = allMembers.filter((m) => m.roleCategory === "FUNCTION").length;
 
           return (
             <div
@@ -334,10 +321,9 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
                 <span className="px-1.5 py-0.5 rounded bg-red-50 text-red-700">
                   ROOT {oRoot}
                 </span>
-              </div>
-
-              <div className="text-xs gala-muted">
-                {needText(oRnd, oProduct, oGrowth)}
+                <span className="px-1.5 py-0.5 rounded bg-green-50 text-green-700">
+                  职能 {oFunction}
+                </span>
               </div>
 
               <div className="text-xs gala-muted">
