@@ -60,7 +60,7 @@ function canJoinOnline(
   const root = onlineMembers.filter((m) => m.roleCategory === "ROOT").length + (joinerRole === "ROOT" ? 1 : 0);
   const total = onlineMembers.length + 1;
 
-  if (total > 5) return { ok: false, message: "在线人数已达 5 人上限" };
+  if (total > 5) return { ok: false, message: "人数已达 5 人上限" };
   if (root > 1) return { ok: false, message: "ROOT 需要打散（每队最多 1 个）" };
 
   const slots = 5 - total;
@@ -97,7 +97,6 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [snap, setSnap] = useState<Snapshot>(initial);
-  const [onlineExpanded, setOnlineExpanded] = useState(false);
 
   const { userId, user, teams, myTeamId, membersByTeam } = snap;
 
@@ -161,16 +160,6 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [myTeamId]);
-
-  // --------------- Signed-up count (all with a team, online or offline) ---------------
-
-  const signedUpCount = useMemo(() => {
-    const ids = new Set<string>();
-    for (const members of Object.values(membersByTeam)) {
-      for (const m of members) ids.add(m.userId);
-    }
-    return ids.size;
-  }, [membersByTeam]);
 
   // --------------- Filter members by online presence ---------------
 
@@ -259,54 +248,6 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
 
   return (
     <div className="space-y-4">
-      {/* Online users bar */}
-      <div
-        className="gala-card p-4 text-sm space-y-2 cursor-pointer"
-        onClick={() => setOnlineExpanded(!onlineExpanded)}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="font-medium text-foreground">在线用户</div>
-            <div className="flex items-center gap-1.5">
-              <span
-                className={`inline-block w-2 h-2 rounded-full ${
-                  connected ? "bg-green-500 animate-pulse" : "bg-neutral-300"
-                }`}
-              />
-              <span className="gala-muted text-xs">
-                {signedUpCount} 人已组队
-                {connected ? `（${onlineUsers.length} 人在线）` : "（连接中...）"}
-              </span>
-            </div>
-          </div>
-          <div className="gala-muted text-[10px]">{onlineExpanded ? "收起" : "展开"}</div>
-        </div>
-
-        {onlineExpanded && (
-          <div className="pt-2 border-t gala-divider">
-            {onlineUsers.length === 0 ? (
-              <div className="gala-muted text-xs">暂无在线用户</div>
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {onlineUsers.map((u) => (
-                  <span key={u.userId} className="inline-flex items-center gap-1 text-xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
-                    <span className="text-foreground/80">{u.name}</span>
-                    <span
-                      className={`px-1.5 py-0.5 rounded text-[10px] ${
-                        ROLE_BADGE[u.roleCategory] ?? "bg-neutral-100 text-neutral-600"
-                      }`}
-                    >
-                      {ROLE_LABEL[u.roleCategory] ?? u.roleCategory}
-                    </span>
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
       {/* Rules */}
       <div className="gala-card p-4 text-sm">
         <div className="font-medium text-foreground mb-1">📋 组队规则</div>
@@ -323,7 +264,8 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
               🎯 你当前在队伍：{my.id}
             </div>
             <div className="gala-muted text-xs mt-1">
-              {needText(my.rndCount, my.productCount, my.growthCount)}；在线人数：{my.memberCount}
+              {needText(my.rndCount, my.productCount, my.growthCount)}；人数：{(membersByTeam[my.id] ?? []).length}
+              {connected && (membersByTeam[my.id] ?? []).length !== my.memberCount && `（${my.memberCount} 人在线）`}
             </div>
           </div>
           <button disabled={busy === "leave"} className="gala-btn-outline" onClick={leave}>
@@ -376,7 +318,10 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
                 </div>
               </div>
 
-              <div className="text-sm gala-muted">在线人数：{om.length}/5</div>
+              <div className="text-sm gala-muted">
+                人数：{allMembers.length}/5
+                {connected && allMembers.length !== om.length && `（${om.length} 人在线）`}
+              </div>
 
               <div className="flex flex-wrap gap-1.5 text-xs">
                 <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700">
