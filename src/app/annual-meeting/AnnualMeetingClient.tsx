@@ -13,7 +13,6 @@ export default function AnnualMeetingClient({
   const [attending, setAttending] = useState<boolean | null>(initialAttending ?? null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showContestPrompt, setShowContestPrompt] = useState(true);
 
   async function handleAttendingChoice(willAttend: boolean) {
     if (busy) return;
@@ -45,22 +44,11 @@ export default function AnnualMeetingClient({
           <div className="text-sm text-green-600">
             ✓ 您已确认参加年会
           </div>
-          {showContestPrompt ? (
-            <div className="space-y-3">
-              <div className="text-sm">报名参加趣味编码比赛不？</div>
-              <div className="flex items-center justify-center gap-3">
-                <a className="gala-btn min-w-[120px]" href="/contest-signup">
-                  去报名
-                </a>
-                <button
-                  className="gala-btn-outline min-w-[120px]"
-                  onClick={() => setShowContestPrompt(false)}
-                >
-                  暂不
-                </button>
-              </div>
-            </div>
-          ) : null}
+          <div className="flex items-center justify-center">
+            <a className="gala-btn min-w-[120px]" href="/contest-signup">
+              去报名参加趣味编码比赛
+            </a>
+          </div>
         </div>
       );
     } else {
