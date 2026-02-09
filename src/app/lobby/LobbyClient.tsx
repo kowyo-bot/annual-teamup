@@ -140,6 +140,16 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, myTeamId]);
 
+  // --------------- Signed-up count (all with a team, online or offline) ---------------
+
+  const signedUpCount = useMemo(() => {
+    const ids = new Set<string>();
+    for (const members of Object.values(membersByTeam)) {
+      for (const m of members) ids.add(m.userId);
+    }
+    return ids.size;
+  }, [membersByTeam]);
+
   // --------------- Filter members by online presence ---------------
 
   const onlineMembersByTeam = useMemo(() => {
@@ -242,7 +252,8 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
                 }`}
               />
               <span className="gala-muted text-xs">
-                {connected ? `${onlineUsers.length} 人在线` : "连接中..."}
+                {signedUpCount} 人已组队
+                {connected ? `（${onlineUsers.length} 人在线）` : "（连接中...）"}
               </span>
             </div>
           </div>
@@ -312,6 +323,14 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
         {teams.map((t) => {
           const isMine = t.id === myTeamId;
           const om = onlineMembersByTeam[t.id] ?? [];
+          const allMembers = membersByTeam[t.id] ?? [];
+          const sortedMembers = [...allMembers].sort((a, b) =>
+            onlineUserIds.has(a.userId) === onlineUserIds.has(b.userId)
+              ? 0
+              : onlineUserIds.has(a.userId)
+                ? 1
+                : -1
+          );
           const oRnd = om.filter((m) => m.roleCategory === "RND").length;
           const oProduct = om.filter((m) => m.roleCategory === "PRODUCT").length;
           const oGrowth = om.filter((m) => m.roleCategory === "GROWTH").length;
@@ -357,16 +376,22 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
               </div>
 
               <div className="text-xs gala-muted">
-                在线成员：
-                {om.length
-                  ? om.map((m) => (
-                      <span key={m.userId}>
-                        {m.name}
-                        <span className="text-foreground/40">({ROLE_LABEL[m.roleCategory] ?? m.roleCategory})</span>
-                        {" "}
-                      </span>
-                    ))
-                  : "（无人在线）"}
+                成员：
+                {sortedMembers.length
+                  ? sortedMembers.map((m) => {
+                      const isOnline = onlineUserIds.has(m.userId);
+                      return (
+                        <span key={m.userId}>
+                          {m.name}
+                          <span className="text-foreground/40">({ROLE_LABEL[m.roleCategory] ?? m.roleCategory})</span>
+                          <span className={isOnline ? "text-green-600" : "text-foreground/50"}>
+                            {isOnline ? " · 在线" : " · 离线"}
+                          </span>
+                          {" "}
+                        </span>
+                      );
+                    })
+                  : "（暂无成员）"}
               </div>
 
               <div className="pt-1">

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { eq, sql } from "drizzle-orm";
 
 import { requireDb } from "@/db";
-import { annualMeetingRegistrations, users } from "@/db/schema";
+import { annualMeetingRegistrations, teamMembers, users } from "@/db/schema";
 import { isAdminSession } from "@/lib/admin";
 import AdminClient from "./AdminClient";
 
@@ -59,13 +59,21 @@ export default async function AdminPage() {
     createdAt: r.createdAt.toISOString(),
   }));
 
+  const [{ count: teamSignupCount }] = await db
+    .select({ count: sql<number>`count(distinct ${teamMembers.userId})` })
+    .from(teamMembers);
+
   return (
     <main className="min-h-screen p-6">
       <div className="mx-auto w-full max-w-5xl space-y-6">
         <div className="space-y-1">
           <div className="text-2xl gala-heading">年会系统后台</div>
         </div>
-        <AdminClient initialAnnualMeeting={serializedRows} initialDeclined={serializedDeclinedRows} />
+        <AdminClient
+          initialAnnualMeeting={serializedRows}
+          initialDeclined={serializedDeclinedRows}
+          initialTeamSignupCount={Number(teamSignupCount ?? 0)}
+        />
       </div>
     </main>
   );

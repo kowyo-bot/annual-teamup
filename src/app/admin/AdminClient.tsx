@@ -34,9 +34,18 @@ function exportToExcel(rows: Record<string, string>[], filename: string, sheetNa
   XLSX.writeFile(wb, filename);
 }
 
-export default function AdminClient({ initialAnnualMeeting, initialDeclined }: { initialAnnualMeeting: AnnualMeetingRow[]; initialDeclined: AnnualMeetingRow[] }) {
+export default function AdminClient({
+  initialAnnualMeeting,
+  initialDeclined,
+  initialTeamSignupCount = 0,
+}: {
+  initialAnnualMeeting: AnnualMeetingRow[];
+  initialDeclined: AnnualMeetingRow[];
+  initialTeamSignupCount?: number;
+}) {
   const [annualMeeting, setAnnualMeeting] = useState<AnnualMeetingRow[]>(initialAnnualMeeting);
   const [declined, setDeclined] = useState<AnnualMeetingRow[]>(initialDeclined);
+  const [teamSignupCount, setTeamSignupCount] = useState(initialTeamSignupCount);
   const [connected, setConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
 
@@ -253,7 +262,8 @@ export default function AdminClient({ initialAnnualMeeting, initialDeclined }: {
           </button>
         </div>
         <div className="text-xs gala-muted">
-          {connected ? `${onlineUsers.length} 人在线` : "连接中..."}
+          {teamSignupCount} 人已组队
+          {connected ? `（${onlineUsers.length} 人在线）` : "（连接中...）"}
         </div>
         <div className="flex flex-wrap gap-2 text-xs">
           {onlineUsers.map((u) => (
