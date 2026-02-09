@@ -31,6 +31,14 @@ type OnlineUser = {
   teamId?: string | null;
 };
 
+const ROLE_LABEL: Record<string, string> = {
+  RND: "研发",
+  PRODUCT: "产品",
+  GROWTH: "增长",
+  ROOT: "ROOT",
+  FUNCTION: "职能",
+};
+
 function formatDate(value: string) {
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return "";
@@ -144,7 +152,7 @@ export default function AdminClient({
       annualMeeting.map((r) => ({
         姓名: r.name,
         邮箱: r.email,
-        角色: r.roleCategory,
+        角色: ROLE_LABEL[r.roleCategory] ?? r.roleCategory,
         报名时间: formatDate(r.createdAt),
       })),
     [annualMeeting],
@@ -155,7 +163,7 @@ export default function AdminClient({
       declined.map((r) => ({
         姓名: r.name,
         邮箱: r.email,
-        角色: r.roleCategory,
+        角色: ROLE_LABEL[r.roleCategory] ?? r.roleCategory,
         报名时间: formatDate(r.createdAt),
       })),
     [declined],
@@ -168,7 +176,7 @@ export default function AdminClient({
       contestSignups.map((r) => ({
         姓名: r.name,
         邮箱: r.email,
-        角色: r.roleCategory,
+        角色: ROLE_LABEL[r.roleCategory] ?? r.roleCategory,
         队号: r.teamId ?? "未加入",
         报名时间: formatDate(r.createdAt),
         在线状态: onlineUserIds.has(r.userId) ? "在线" : "离线",
@@ -212,7 +220,7 @@ export default function AdminClient({
                 <tr key={r.userId} className="border-b last:border-0">
                   <td className="py-2 pr-3">{r.name}</td>
                   <td className="py-2 pr-3 text-xs break-all">{r.email}</td>
-                  <td className="py-2 pr-3">{r.roleCategory}</td>
+                  <td className="py-2 pr-3">{ROLE_LABEL[r.roleCategory] ?? r.roleCategory}</td>
                   <td className="py-2">{formatDate(r.createdAt)}</td>
                 </tr>
               ))}
@@ -260,7 +268,7 @@ export default function AdminClient({
                 <tr key={r.userId} className="border-b last:border-0">
                   <td className="py-2 pr-3">{r.name}</td>
                   <td className="py-2 pr-3 text-xs break-all">{r.email}</td>
-                  <td className="py-2 pr-3">{r.roleCategory}</td>
+                  <td className="py-2 pr-3">{ROLE_LABEL[r.roleCategory] ?? r.roleCategory}</td>
                   <td className="py-2">{formatDate(r.createdAt)}</td>
                 </tr>
               ))}
@@ -320,7 +328,7 @@ export default function AdminClient({
                   </td>
                   <td className="py-2 pr-3">{r.name}</td>
                   <td className="py-2 pr-3 text-xs break-all">{r.email}</td>
-                  <td className="py-2 pr-3">{r.roleCategory}</td>
+                  <td className="py-2 pr-3">{ROLE_LABEL[r.roleCategory] ?? r.roleCategory}</td>
                   <td className="py-2 pr-3">{r.teamId ?? <span className="gala-muted">未加入</span>}</td>
                   <td className="py-2">{formatDate(r.createdAt)}</td>
                 </tr>

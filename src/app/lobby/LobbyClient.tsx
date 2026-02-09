@@ -268,7 +268,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
       ) : null}
 
       {/* Team grid — counts reflect all signed-up members */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {teams.map((t) => {
           const isMine = t.id === myTeamId;
           const om = onlineMembersByTeam[t.id] ?? [];
@@ -294,7 +294,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
               <div className="flex items-center justify-between">
                 <div className="font-medium text-foreground">队伍 {t.id}</div>
                 <div
-                  className={`text-[10px] px-2 py-0.5 rounded-full ${
+                  className={`text-xs px-2 py-0.5 rounded-full ${
                     t.status === "locked"
                       ? "bg-red-50 text-red-600 border border-red-200"
                       : "bg-green-50 text-green-600 border border-green-200"
@@ -344,7 +344,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
                   disabled={
                     !!myTeamId || t.memberCount >= 5 || busy === t.id || t.status === "locked"
                   }
-                  className="gala-btn text-xs"
+                  className="gala-btn text-xs w-full"
                   onClick={() => join(t.id)}
                 >
                   {busy === t.id
