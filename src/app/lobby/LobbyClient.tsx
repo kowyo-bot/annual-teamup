@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase-browser";
 
 type Team = {
@@ -107,10 +107,16 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
   const [connected, setConnected] = useState(false);
 
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const myTeamIdRef = useRef(myTeamId);
+  myTeamIdRef.current = myTeamId;
+
+  // Stable channel subscription — only recreated when userId changes
   useEffect(() => {
     const channel = supabase.channel("lobby-presence", {
       config: { presence: { key: userId } },
     });
+    channelRef.current = channel;
 
     channel
       .on("presence", { event: "sync" }, () => {
@@ -127,18 +133,34 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
             name: user.name,
             email: user.email,
             roleCategory: user.roleCategory,
-            teamId: myTeamId,
+            teamId: myTeamIdRef.current,
           });
         }
       });
 
     return () => {
+      channelRef.current = null;
       channel.untrack();
       supabase.removeChannel(channel);
       setConnected(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, myTeamId]);
+  }, [userId]);
+
+  // Update presence data when myTeamId changes (without reconnecting)
+  useEffect(() => {
+    const channel = channelRef.current;
+    if (channel) {
+      channel.track({
+        userId,
+        name: user.name,
+        email: user.email,
+        roleCategory: user.roleCategory,
+        teamId: myTeamId,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myTeamId]);
 
   // --------------- Signed-up count (all with a team, online or offline) ---------------
 
