@@ -23,7 +23,7 @@ export default async function ContestSignupPage() {
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-lg space-y-6 text-center">
         <div className="text-3xl">🏆</div>
-        <h1 className="text-2xl gala-heading">编程比赛报名</h1>
+        <h1 className="text-2xl gala-heading">趣味编码比赛报名</h1>
 
         {!user ? (
           <div className="gala-card p-6 space-y-4">

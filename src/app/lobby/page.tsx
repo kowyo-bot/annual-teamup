@@ -51,7 +51,7 @@ export default async function LobbyPage() {
         </div>
       ) : !contestRegistered ? (
         <div className="gala-card p-6 space-y-3">
-          <div className="gala-muted text-sm">您尚未报名编程比赛，请先报名后进入组队大厅</div>
+          <div className="gala-muted text-sm">您尚未报名趣味编码比赛，请先报名后进入组队大厅</div>
           <Link className="gala-btn inline-block" href="/contest-signup">
             去比赛报名
           </Link>

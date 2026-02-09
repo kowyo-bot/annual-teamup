@@ -27,7 +27,7 @@ export default function ContestSignupClient({ registered: initialRegistered }: {
   if (registered) {
     return (
       <div className="space-y-4">
-        <div className="text-sm text-green-600">✓ 您已报名编程比赛</div>
+        <div className="text-sm text-green-600">✓ 您已报名趣味编码比赛</div>
         <a className="gala-btn inline-block" href="/lobby">
           进入组队大厅
         </a>
@@ -38,7 +38,7 @@ export default function ContestSignupClient({ registered: initialRegistered }: {
   return (
     <div className="space-y-4">
       <button disabled={busy} className="gala-btn w-full" onClick={handleSignup}>
-        {busy ? "报名中..." : "确认报名编程比赛"}
+        {busy ? "报名中..." : "确认报名趣味编码比赛"}
       </button>
       {error ? <div className="text-xs text-red-primary">⚠ {error}</div> : null}
     </div>

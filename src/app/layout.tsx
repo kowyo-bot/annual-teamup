@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "年会组队系统",
-  description: "年会编程比赛报名与实时组队平台",
+  description: "趣味编码比赛报名与实时组队平台",
 };
 
 export default function RootLayout({

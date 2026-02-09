@@ -47,7 +47,7 @@ export default function AnnualMeetingClient({
           </div>
           {showContestPrompt ? (
             <div className="space-y-3">
-              <div className="text-sm">是否报名编程比赛？</div>
+              <div className="text-sm">报名参加趣味编码比赛不？</div>
               <div className="flex items-center justify-center gap-3">
                 <a className="gala-btn min-w-[120px]" href="/contest-signup">
                   去报名
