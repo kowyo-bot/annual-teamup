@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { eq, sql } from "drizzle-orm";
 
 import { requireDb } from "@/db";
-import { annualMeetingRegistrations, teamMembers, users } from "@/db/schema";
+import { annualMeetingRegistrations, contestRegistrations, teamMembers, users } from "@/db/schema";
 import { isAdminSession } from "@/lib/admin";
 import AdminClient from "./AdminClient";
 
@@ -63,6 +63,26 @@ export default async function AdminPage() {
     .select({ count: sql<number>`count(distinct ${teamMembers.userId})` })
     .from(teamMembers);
 
+  const contestRows = await db
+    .select({
+      userId: users.id,
+      name: users.name,
+      email: users.email,
+      roleCategory: users.roleCategory,
+      status: contestRegistrations.status,
+      teamId: teamMembers.teamId,
+      createdAt: contestRegistrations.createdAt,
+    })
+    .from(contestRegistrations)
+    .innerJoin(users, eq(users.id, contestRegistrations.userId))
+    .leftJoin(teamMembers, eq(teamMembers.userId, contestRegistrations.userId))
+    .orderBy(contestRegistrations.createdAt);
+
+  const serializedContestRows = contestRows.map((r) => ({
+    ...r,
+    createdAt: r.createdAt.toISOString(),
+  }));
+
   return (
     <main className="min-h-screen p-6">
       <div className="mx-auto w-full max-w-5xl space-y-6">
@@ -73,6 +93,7 @@ export default async function AdminPage() {
           initialAnnualMeeting={serializedRows}
           initialDeclined={serializedDeclinedRows}
           initialTeamSignupCount={Number(teamSignupCount ?? 0)}
+          initialContestSignups={serializedContestRows}
         />
       </div>
     </main>
