@@ -20,7 +20,7 @@ const sql = databaseUrl
     })
   : null;
 
-if (sql && process.env.NODE_ENV !== "production") {
+if (sql) {
   global.__teamup_sql = sql;
 }
 
