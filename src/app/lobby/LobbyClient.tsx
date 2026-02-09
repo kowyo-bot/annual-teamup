@@ -219,7 +219,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
 
   useEffect(() => {
     refreshOnce();
-    const id = setInterval(refreshOnce, 5_000);
+    const id = setInterval(refreshOnce, 15_000);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -16,7 +16,7 @@ const sql = databaseUrl
       // In serverless, prepared statements can cause issues.
       prepare: false,
       // Supabase pooler works best with lower concurrency per function.
-      max: 5,
+      max: 10,
     })
   : null;
 
