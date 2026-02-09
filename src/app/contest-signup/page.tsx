@@ -1,17 +1,29 @@
 import Link from "next/link";
+import { eq } from "drizzle-orm";
+
+import { requireDb } from "@/db";
+import { contestRegistrations } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
+import ContestSignupClient from "./ContestSignupClient";
 
 export const dynamic = "force-dynamic";
 
 export default async function ContestSignupPage() {
   const user = await getCurrentUser();
+  const db = user ? requireDb() : null;
+  const [registration] = user
+    ? await db!
+        .select({ status: contestRegistrations.status })
+        .from(contestRegistrations)
+        .where(eq(contestRegistrations.userId, user.id))
+        .limit(1)
+    : [];
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-lg space-y-6 text-center">
         <div className="text-3xl">🏆</div>
         <h1 className="text-2xl gala-heading">编程比赛报名</h1>
-        <p className="gala-muted text-xs">提前报名</p>
 
         {!user ? (
           <div className="gala-card p-6 space-y-4">
@@ -21,18 +33,15 @@ export default async function ContestSignupPage() {
             </Link>
           </div>
         ) : (
-          <div className="gala-card p-6 space-y-4 text-left">
-            <div className="rounded-lg bg-red-primary/5 border border-red-primary/10 p-3 text-sm">
+          <div className="gala-card p-6 space-y-4">
+            <div className="rounded-lg bg-red-primary/5 border border-red-primary/10 p-3 text-sm text-left">
               <span className="text-red-primary text-xs font-medium">组队规则</span>
               <p className="gala-muted text-xs mt-1">
                 4-5 人；研发≥2、产品≥1、增长≥1、ROOT≤1
               </p>
             </div>
-            <div className="text-center pt-2">
-              <Link className="gala-btn inline-block" href="/lobby">
-                进入实时组队大厅
-              </Link>
-            </div>
+
+            <ContestSignupClient registered={!!registration} />
           </div>
         )}
       </div>

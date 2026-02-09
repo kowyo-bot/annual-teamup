@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { requireDb } from "@/db";
-import { teamMembers, teams, users } from "@/db/schema";
+import { contestRegistrations, teamMembers, teams, users } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { ensureDefaultTeams, getMyTeamId } from "@/lib/teamup";
 import { eq } from "drizzle-orm";
@@ -14,6 +14,17 @@ export const dynamic = "force-dynamic";
 export default async function LobbyPage() {
   const user = await getCurrentUser();
 
+  let contestRegistered = false;
+  if (user) {
+    const db = requireDb();
+    const [reg] = await db
+      .select({ status: contestRegistrations.status })
+      .from(contestRegistrations)
+      .where(eq(contestRegistrations.userId, user.id))
+      .limit(1);
+    contestRegistered = !!reg;
+  }
+
   return (
     <main className="mx-auto max-w-6xl p-6 space-y-5">
       <div className="flex items-start justify-between gap-4">
@@ -25,7 +36,7 @@ export default async function LobbyPage() {
           <UserCard
             user={{
               name: user.name,
-              employeeId: user.employeeId,
+              email: user.email,
               roleCategory: user.roleCategory,
             }}
           />
@@ -38,6 +49,13 @@ export default async function LobbyPage() {
             去报名
           </Link>
         </div>
+      ) : !contestRegistered ? (
+        <div className="gala-card p-6 space-y-3">
+          <div className="gala-muted text-sm">您尚未报名编程比赛，请先报名后进入组队大厅</div>
+          <Link className="gala-btn inline-block" href="/contest-signup">
+            去比赛报名
+          </Link>
+        </div>
       ) : (
         <LobbyData user={user} />
       )}
@@ -45,7 +63,7 @@ export default async function LobbyPage() {
   );
 }
 
-async function LobbyData({ user }: { user: { id: string; name: string; employeeId: string; roleCategory: string } }) {
+async function LobbyData({ user }: { user: { id: string; name: string; email: string; roleCategory: string } }) {
   const db = requireDb();
   await ensureDefaultTeams(db);
 
@@ -91,7 +109,7 @@ async function LobbyData({ user }: { user: { id: string; name: string; employeeI
     <LobbyClient
       initial={{
         userId: user.id,
-        user: { name: user.name, employeeId: user.employeeId, roleCategory: user.roleCategory },
+        user: { name: user.name, email: user.email, roleCategory: user.roleCategory },
         teams: list as any,
         myTeamId,
         membersByTeam,

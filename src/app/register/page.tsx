@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 
-type Role = "RND" | "PRODUCT" | "GROWTH" | "ROOT";
+type Role = "RND" | "PRODUCT" | "GROWTH" | "ROOT" | "FUNCTION";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
-  const [employeeId, setEmployeeId] = useState("");
+  const [email, setEmail] = useState("");
   const [roleCategory, setRoleCategory] = useState<Role>("RND");
   const [msg, setMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ export default function RegisterPage() {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ name, employeeId, roleCategory }),
+      body: JSON.stringify({ name, email, roleCategory }),
     });
 
     const data = await res.json().catch(() => ({}));
@@ -30,7 +30,7 @@ export default function RegisterPage() {
       return;
     }
 
-    window.location.href = "/lobby";
+    window.location.href = "/annual-meeting";
   }
 
   return (
@@ -40,7 +40,7 @@ export default function RegisterPage() {
           <div className="text-3xl">🏮</div>
           <h1 className="text-2xl gala-heading">年会报名</h1>
           <p className="gala-muted text-sm">
-            输入姓名、工号、角色后即可完成报名并进入实时组队大厅
+            输入姓名、邮箱、角色后即可完成报名并进入实时组队大厅
           </p>
         </div>
 
@@ -51,18 +51,19 @@ export default function RegisterPage() {
               className="gala-input"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="张三"
+              placeholder=""
               required
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground/70">工号 / ID</label>
+            <label className="text-sm font-medium text-foreground/70">邮箱</label>
             <input
               className="gala-input"
-              value={employeeId}
-              onChange={(e) => setEmployeeId(e.target.value)}
-              placeholder="E12345"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="@fuzhi.ai"
               required
             />
           </div>
@@ -78,12 +79,13 @@ export default function RegisterPage() {
               <option value="PRODUCT">产品</option>
               <option value="GROWTH">增长</option>
               <option value="ROOT">ROOT</option>
+              <option value="FUNCTION">职能</option>
             </select>
           </div>
 
           <div className="pt-2">
             <button disabled={loading} className="gala-btn w-full">
-              {loading ? "报名中..." : "完成报名并进入大厅"}
+              {loading ? "报名中..." : "报名"}
             </button>
           </div>
 

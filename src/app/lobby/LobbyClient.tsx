@@ -22,13 +22,14 @@ type Member = {
 type OnlineUser = {
   userId: string;
   name: string;
-  employeeId: string;
+  email: string;
   roleCategory: string;
+  teamId?: string | null;
 };
 
 type Snapshot = {
   userId: string;
-  user: { name: string; employeeId: string; roleCategory: string };
+  user: { name: string; email: string; roleCategory: string };
   teams: Team[];
   myTeamId: string | null;
   membersByTeam: Record<string, Member[]>;
@@ -81,6 +82,7 @@ const ROLE_BADGE: Record<string, string> = {
   PRODUCT: "bg-purple-50 text-purple-700 border border-purple-200",
   GROWTH: "bg-amber-50 text-amber-700 border border-amber-200",
   ROOT: "bg-red-50 text-red-700 border border-red-200",
+  FUNCTION: "bg-green-50 text-green-700 border border-green-200",
 };
 
 const ROLE_LABEL: Record<string, string> = {
@@ -88,6 +90,7 @@ const ROLE_LABEL: Record<string, string> = {
   PRODUCT: "产品",
   GROWTH: "增长",
   ROOT: "ROOT",
+  FUNCTION: "职能",
 };
 
 export default function LobbyClient({ initial }: { initial: Snapshot }) {
@@ -122,8 +125,9 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
           await channel.track({
             userId,
             name: user.name,
-            employeeId: user.employeeId,
+            email: user.email,
             roleCategory: user.roleCategory,
+            teamId: myTeamId,
           });
         }
       });
@@ -134,7 +138,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
       setConnected(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  }, [userId, myTeamId]);
 
   // --------------- Filter members by online presence ---------------
 
@@ -295,7 +299,7 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
         </div>
       ) : (
         <div className="gala-card p-4 text-sm gala-muted">
-          你还没加入队伍，选择下面任意队伍加入（先到先得）。
+          你还没加入队伍，选择下面任意队伍加入。
         </div>
       )}
 

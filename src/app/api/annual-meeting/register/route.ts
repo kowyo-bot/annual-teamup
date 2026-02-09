@@ -4,17 +4,20 @@ import { requireDb } from "@/db";
 import { annualMeetingRegistrations } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 
-export async function POST() {
+export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ ok: false, message: "UNAUTHENTICATED" }, { status: 401 });
+
+  const body = (await req.json().catch(() => null)) as { attending?: boolean } | null;
+  const attending = body?.attending ?? true;
 
   const db = requireDb();
   await db
     .insert(annualMeetingRegistrations)
-    .values({ userId: user.id, attending: true })
+    .values({ userId: user.id, attending })
     .onConflictDoUpdate({
       target: annualMeetingRegistrations.userId,
-      set: { attending: true },
+      set: { attending },
     });
 
   return NextResponse.json({ ok: true });

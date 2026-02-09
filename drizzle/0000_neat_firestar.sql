@@ -1,4 +1,4 @@
-CREATE TYPE "public"."teamup_role_category" AS ENUM('RND', 'PRODUCT', 'GROWTH', 'ROOT');--> statement-breakpoint
+CREATE TYPE "public"."teamup_role_category" AS ENUM('RND', 'PRODUCT', 'GROWTH', 'ROOT', 'FUNCTION');--> statement-breakpoint
 CREATE TABLE "teamup_annual_meeting_registrations" (
 	"user_id" text NOT NULL,
 	"attending" boolean NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE "teamup_teams" (
 CREATE TABLE "teamup_users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" varchar(64) NOT NULL,
-	"employee_id" varchar(64) NOT NULL,
+	"email" varchar(128) NOT NULL,
 	"role_category" "teamup_role_category" NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -69,4 +69,4 @@ CREATE UNIQUE INDEX "teamup_team_members_user_id_uniq" ON "teamup_team_members" 
 CREATE INDEX "teamup_team_members_team_id_idx" ON "teamup_team_members" USING btree ("team_id");--> statement-breakpoint
 CREATE INDEX "teamup_teams_status_idx" ON "teamup_teams" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "teamup_teams_created_at_idx" ON "teamup_teams" USING btree ("created_at");--> statement-breakpoint
-CREATE UNIQUE INDEX "teamup_users_employee_id_uniq" ON "teamup_users" USING btree ("employee_id");
+CREATE UNIQUE INDEX "teamup_users_email_uniq" ON "teamup_users" USING btree ("email");

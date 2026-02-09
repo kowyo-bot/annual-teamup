@@ -1,5 +1,5 @@
 {
-  "id": "e3da2ad0-331e-41c5-b1c3-a8030adfa2b9",
+  "id": "6083e1a7-5660-45fb-8bcc-bce0282b1bcb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -489,9 +489,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "employee_id": {
-          "name": "employee_id",
-          "type": "varchar(64)",
+        "email": {
+          "name": "email",
+          "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
         },
@@ -511,11 +511,11 @@
         }
       },
       "indexes": {
-        "teamup_users_employee_id_uniq": {
-          "name": "teamup_users_employee_id_uniq",
+        "teamup_users_email_uniq": {
+          "name": "teamup_users_email_uniq",
           "columns": [
             {
-              "expression": "employee_id",
+              "expression": "email",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -543,7 +543,8 @@
         "RND",
         "PRODUCT",
         "GROWTH",
-        "ROOT"
+        "ROOT",
+        "FUNCTION"
       ]
     }
   },

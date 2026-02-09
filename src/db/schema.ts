@@ -16,6 +16,7 @@ export const roleCategoryEnum = pgEnum("teamup_role_category", [
   "PRODUCT",
   "GROWTH",
   "ROOT",
+  "FUNCTION",
 ]);
 
 export const users = pgTable(
@@ -23,11 +24,11 @@ export const users = pgTable(
   {
     id: text("id").primaryKey(), // cuid/uuid
     name: varchar("name", { length: 64 }).notNull(),
-    employeeId: varchar("employee_id", { length: 64 }).notNull(),
+    email: varchar("email", { length: 128 }).notNull(),
     roleCategory: roleCategoryEnum("role_category").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [uniqueIndex("teamup_users_employee_id_uniq").on(t.employeeId)],
+  (t) => [uniqueIndex("teamup_users_email_uniq").on(t.email)],
 );
 
 export const inviteCodes = pgTable(

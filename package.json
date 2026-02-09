@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "db:generate": "bash -lc 'set -a; [ -f .env.local ] && source .env.local; set +a; drizzle-kit generate'",
-    "db:migrate": "bash -lc 'set -a; [ -f .env.local ] && source .env.local; set +a; drizzle-kit migrate'"
+    "db:migrate": "bash -lc 'set -a; [ -f .env.local ] && source .env.local; set +a; drizzle-kit migrate'",
+    "db:clear-accounts": "bash -lc 'set -a; [ -f .env.local ] && source .env.local; set +a; npx tsx scripts/clear-accounts.ts'"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.95.3",

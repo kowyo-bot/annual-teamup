@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { requireDb } from "@/db";
-import { annualMeetingRegistrations, sessions, users } from "@/db/schema";
+import { sessions, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { setSessionCookie } from "@/lib/auth";
 
@@ -13,16 +13,16 @@ export async function POST(req: Request) {
   const body = (await req.json().catch(() => null)) as
     | {
         name?: string;
-        employeeId?: string;
-        roleCategory?: "RND" | "PRODUCT" | "GROWTH" | "ROOT";
+        email?: string;
+        roleCategory?: "RND" | "PRODUCT" | "GROWTH" | "ROOT" | "FUNCTION";
       }
     | null;
 
   const name = body?.name?.trim();
-  const employeeId = body?.employeeId?.trim();
+  const email = body?.email?.trim()?.toLowerCase();
   const roleCategory = body?.roleCategory;
 
-  if (!name || !employeeId || !roleCategory) {
+  if (!name || !email || !roleCategory) {
     return badRequest("缺少字段");
   }
 
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     const [existing] = await tx
       .select()
       .from(users)
-      .where(eq(users.employeeId, employeeId))
+      .where(eq(users.email, email))
       .limit(1)
       .for("update");
 
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
         .set({ name, roleCategory })
         .where(eq(users.id, userId));
     } else {
-      await tx.insert(users).values({ id: userId, name, employeeId, roleCategory });
+      await tx.insert(users).values({ id: userId, name, email, roleCategory });
     }
 
     const token = crypto.randomBytes(32).toString("hex");
@@ -52,12 +52,6 @@ export async function POST(req: Request) {
     const expiresAt = new Date(Date.now() + maxAgeSeconds * 1000);
 
     await tx.insert(sessions).values({ token, userId, expiresAt });
-
-    // Auto-register for annual meeting
-    await tx
-      .insert(annualMeetingRegistrations)
-      .values({ userId, attending: true })
-      .onConflictDoNothing();
 
     return { ok: true as const, token, maxAgeSeconds };
   });

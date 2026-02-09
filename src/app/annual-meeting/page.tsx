@@ -36,19 +36,21 @@ export default async function AnnualMeetingPage() {
           <div className="gala-card p-6 space-y-5">
             <div className="text-sm">
               你好，<span className="text-red-primary font-medium">{user.name}</span>
-              <span className="gala-muted">（{user.employeeId}）</span>
+              <span className="gala-muted text-xs break-all">（{user.email}）</span>
             </div>
 
-            <AnnualMeetingClient initialRegistered={!!registration?.attending} />
+            <AnnualMeetingClient 
+              initialRegistered={!!registration}
+              initialAttending={registration?.attending}
+            />
 
-            <div className="flex items-center justify-center gap-4">
-              <Link className="gala-btn inline-block" href="/contest-signup">
-                去比赛报名
-              </Link>
-              <Link className="gala-btn-outline inline-block" href="/lobby">
-                进入组队大厅
-              </Link>
-            </div>
+            {registration?.attending && (
+              <div className="flex items-center justify-center">
+                <Link className="gala-btn inline-block" href="/contest-signup">
+                  去比赛报名
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>

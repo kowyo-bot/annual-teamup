@@ -27,7 +27,7 @@ export default async function AdminPage() {
     .select({
       userId: users.id,
       name: users.name,
-      employeeId: users.employeeId,
+      email: users.email,
       roleCategory: users.roleCategory,
       createdAt: annualMeetingRegistrations.createdAt,
     })
@@ -36,7 +36,25 @@ export default async function AdminPage() {
     .where(eq(annualMeetingRegistrations.attending, true))
     .orderBy(annualMeetingRegistrations.createdAt);
 
+  const declinedRows = await db
+    .select({
+      userId: users.id,
+      name: users.name,
+      email: users.email,
+      roleCategory: users.roleCategory,
+      createdAt: annualMeetingRegistrations.createdAt,
+    })
+    .from(annualMeetingRegistrations)
+    .innerJoin(users, eq(users.id, annualMeetingRegistrations.userId))
+    .where(eq(annualMeetingRegistrations.attending, false))
+    .orderBy(annualMeetingRegistrations.createdAt);
+
   const serializedRows = rows.map((r) => ({
+    ...r,
+    createdAt: r.createdAt.toISOString(),
+  }));
+
+  const serializedDeclinedRows = declinedRows.map((r) => ({
     ...r,
     createdAt: r.createdAt.toISOString(),
   }));
@@ -45,10 +63,9 @@ export default async function AdminPage() {
     <main className="min-h-screen p-6">
       <div className="mx-auto w-full max-w-5xl space-y-6">
         <div className="space-y-1">
-          <div className="text-2xl gala-heading">管理员面板</div>
-          <div className="text-xs gala-muted">年会报名数据来自数据库，比赛报名数据来自实时在线</div>
+          <div className="text-2xl gala-heading">年会系统后台</div>
         </div>
-        <AdminClient initialAnnualMeeting={serializedRows} />
+        <AdminClient initialAnnualMeeting={serializedRows} initialDeclined={serializedDeclinedRows} />
       </div>
     </main>
   );

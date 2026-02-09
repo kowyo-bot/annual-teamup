@@ -15,7 +15,7 @@ type TeamCounts = {
   rootCount: number;
 };
 
-export const DEFAULT_TEAM_IDS = Array.from({ length: 30 }, (_, i) => `T${String(i + 1).padStart(2, "0")}`);
+export const DEFAULT_TEAM_IDS = Array.from({ length: 14 }, (_, i) => `T${String(i + 1).padStart(2, "0")}`);
 
 export async function ensureDefaultTeams(db: Db) {
   await db

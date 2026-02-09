@@ -7,12 +7,13 @@ const ROLE_LABEL: Record<string, string> = {
   PRODUCT: "产品",
   GROWTH: "增长",
   ROOT: "ROOT",
+  FUNCTION: "职能",
 };
 
 export default function UserCard({
   user,
 }: {
-  user: { name: string; employeeId: string; roleCategory: string };
+  user: { name: string; email: string; roleCategory: string };
 }) {
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,7 +39,7 @@ export default function UserCard({
 
       {expanded && (
         <div className="mt-2 space-y-1.5 pt-2 border-t gala-divider">
-          <div className="gala-muted">工号: {user.employeeId}</div>
+          <div className="gala-muted text-xs break-all">{user.email}</div>
           <div className="gala-muted">
             角色: <span className="text-foreground/70">{ROLE_LABEL[user.roleCategory] ?? user.roleCategory}</span>
           </div>
