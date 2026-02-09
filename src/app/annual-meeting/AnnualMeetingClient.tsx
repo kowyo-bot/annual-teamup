@@ -13,6 +13,7 @@ export default function AnnualMeetingClient({
   const [attending, setAttending] = useState<boolean | null>(initialAttending ?? null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showRegret, setShowRegret] = useState(false);
 
   async function handleAttendingChoice(willAttend: boolean) {
     if (busy) return;
@@ -60,6 +61,36 @@ export default function AnnualMeetingClient({
           <div className="text-xs text-red-primary/60">
             🎁 祝您春节快乐！
           </div>
+
+          {!showRegret ? (
+            <button
+              className="text-xs gala-muted underline underline-offset-2 hover:text-red-primary transition-colors mt-2"
+              onClick={() => setShowRegret(true)}
+            >
+              我反悔了，想参加年会
+            </button>
+          ) : (
+            <div className="space-y-2 mt-2 pt-3 border-t gala-divider">
+              <div className="text-sm font-medium">确定要改为参加年会吗？</div>
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  disabled={busy}
+                  className="gala-btn text-xs min-w-[80px]"
+                  onClick={() => handleAttendingChoice(true)}
+                >
+                  {busy ? "提交中..." : "确认参加"}
+                </button>
+                <button
+                  disabled={busy}
+                  className="gala-btn-outline text-xs min-w-[80px]"
+                  onClick={() => setShowRegret(false)}
+                >
+                  取消
+                </button>
+              </div>
+              {error ? <div className="text-xs text-red-primary">⚠ {error}</div> : null}
+            </div>
+          )}
         </div>
       );
     }
