@@ -35,6 +35,7 @@ export default function AnnualMeetingClient({
 
     setRegistered(true);
     setAttending(willAttend);
+    setShowRegret(false);
   }
 
   // If user has already made a choice
@@ -50,6 +51,36 @@ export default function AnnualMeetingClient({
               去报名参加趣味编码比赛
             </a>
           </div>
+
+          {!showRegret ? (
+            <button
+              className="text-xs gala-muted underline underline-offset-2 hover:text-red-primary transition-colors mt-2"
+              onClick={() => setShowRegret(true)}
+            >
+              让我再想想，还是不想参加年会了
+            </button>
+          ) : (
+            <div className="space-y-2 mt-2 pt-3 border-t gala-divider">
+              <div className="text-sm font-medium">确定要改为不参加年会吗？</div>
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  disabled={busy}
+                  className="gala-btn text-xs min-w-[80px]"
+                  onClick={() => handleAttendingChoice(false)}
+                >
+                  {busy ? "提交中..." : "确认不参加"}
+                </button>
+                <button
+                  disabled={busy}
+                  className="gala-btn-outline text-xs min-w-[80px]"
+                  onClick={() => setShowRegret(false)}
+                >
+                  取消
+                </button>
+              </div>
+              {error ? <div className="text-xs text-red-primary">⚠ {error}</div> : null}
+            </div>
+          )}
         </div>
       );
     } else {
