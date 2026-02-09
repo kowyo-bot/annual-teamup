@@ -40,7 +40,7 @@ export default function RegisterPage() {
           <div className="text-3xl">🏮</div>
           <h1 className="text-2xl gala-heading">年会报名</h1>
           <p className="gala-muted text-sm">
-            输入姓名、邮箱、角色后即可完成报名并进入实时组队大厅
+            输入姓名、邮箱、角色后即可完成报名并进入组队大厅
           </p>
         </div>
 

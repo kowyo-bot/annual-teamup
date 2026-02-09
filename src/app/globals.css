@@ -74,6 +74,20 @@ body::before {
   font-weight: 700;
 }
 
+/* 年会年份标识 — badge next to lobby heading */
+.gala-year-badge {
+  color: var(--red-primary);
+  background: linear-gradient(135deg, rgba(197, 48, 48, 0.06) 0%, rgba(184, 134, 11, 0.08) 100%);
+  border: 1px solid rgba(197, 48, 48, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gala-year-badge:hover {
+  border-color: rgba(197, 48, 48, 0.35);
+  box-shadow: 0 2px 8px rgba(197, 48, 48, 0.08);
+}
+
 /* Primary button */
 .gala-btn {
   background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);

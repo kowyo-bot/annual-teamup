@@ -25,12 +25,20 @@ export default async function LobbyPage() {
     contestRegistered = !!reg;
   }
 
+  const year = new Date().getFullYear();
+
   return (
     <main className="mx-auto max-w-6xl p-6 space-y-5">
       <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <span className="text-2xl">🏮</span>
-          <h1 className="text-xl gala-heading">实时组队大厅</h1>
+          <h1 className="text-xl gala-heading">DeepWisdom 趣味编码比赛组队</h1>
+          <span
+            className="gala-year-badge inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold tracking-wide"
+            aria-label={`${year} 年会`}
+          >
+            {year}
+          </span>
         </div>
         {user ? (
           <UserCard
