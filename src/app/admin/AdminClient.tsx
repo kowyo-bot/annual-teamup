@@ -109,7 +109,7 @@ export default function AdminClient({
       refreshAnnualMeeting();
       refreshDeclined();
       refreshContestSignups();
-    }, 5_000);
+    }, 15_000);
     return () => clearInterval(id);
   }, [refreshAnnualMeeting, refreshDeclined, refreshContestSignups]);
 
