@@ -265,7 +265,6 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
             </div>
             <div className="gala-muted text-xs mt-1">
               {needText(my.rndCount, my.productCount, my.growthCount)}；人数：{(membersByTeam[my.id] ?? []).length}
-              {connected && (membersByTeam[my.id] ?? []).length !== my.memberCount && `（${my.memberCount} 人在线）`}
             </div>
           </div>
           <button disabled={busy === "leave"} className="gala-btn-outline" onClick={leave}>
@@ -320,7 +319,6 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
 
               <div className="text-sm gala-muted">
                 人数：{allMembers.length}/5
-                {connected && allMembers.length !== om.length && `（${om.length} 人在线）`}
               </div>
 
               <div className="flex flex-wrap gap-1.5 text-xs">
@@ -345,19 +343,13 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
               <div className="text-xs gala-muted">
                 成员：
                 {sortedMembers.length
-                  ? sortedMembers.map((m) => {
-                      const isOnline = onlineUserIds.has(m.userId);
-                      return (
+                  ? sortedMembers.map((m) => (
                         <span key={m.userId}>
                           {m.name}
                           <span className="text-foreground/40">({ROLE_LABEL[m.roleCategory] ?? m.roleCategory})</span>
-                          <span className={isOnline ? "text-green-600" : "text-foreground/50"}>
-                            {isOnline ? " · 在线" : " · 离线"}
-                          </span>
                           {" "}
                         </span>
-                      );
-                    })
+                    ))
                   : "（暂无成员）"}
               </div>
 
