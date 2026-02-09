@@ -43,14 +43,6 @@ export default async function AnnualMeetingPage() {
               initialRegistered={!!registration}
               initialAttending={registration?.attending}
             />
-
-            {registration?.attending && (
-              <div className="flex items-center justify-center">
-                <Link className="gala-btn inline-block" href="/contest-signup">
-                  去比赛报名
-                </Link>
-              </div>
-            )}
           </div>
         )}
       </div>
