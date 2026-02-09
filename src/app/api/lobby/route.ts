@@ -15,6 +15,7 @@ export async function GET() {
   const list = await db
     .select({
       id: teams.id,
+      name: teams.name,
       memberCount: teams.memberCount,
       rndCount: teams.rndCount,
       productCount: teams.productCount,

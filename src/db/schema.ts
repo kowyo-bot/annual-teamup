@@ -73,6 +73,7 @@ export const teams = pgTable(
   "teamup_teams",
   {
     id: text("id").primaryKey(),
+    name: varchar("name", { length: 64 }),
     status: varchar("status", { length: 24 }).notNull().default("forming"), // forming|locked
     lockedAt: timestamp("locked_at", { withTimezone: true }),
     memberCount: integer("member_count").notNull().default(0),

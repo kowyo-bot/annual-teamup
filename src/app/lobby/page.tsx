@@ -78,6 +78,7 @@ async function LobbyData({ user }: { user: { id: string; name: string; email: st
   const list = await db
     .select({
       id: teams.id,
+      name: teams.name,
       status: teams.status,
       memberCount: teams.memberCount,
       rndCount: teams.rndCount,

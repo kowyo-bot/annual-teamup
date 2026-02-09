@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase-browser";
 
 type Team = {
   id: string;
+  name?: string | null;
   status: string;
   memberCount: number;
   rndCount: number;
@@ -83,8 +84,39 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [snap, setSnap] = useState<Snapshot>(initial);
+  const [teamNameDraft, setTeamNameDraft] = useState("");
+  const [teamNameDirty, setTeamNameDirty] = useState(false);
+  const [renameBusy, setRenameBusy] = useState(false);
+  const [renameMsg, setRenameMsg] = useState<string | null>(null);
+  const [renameMsgKind, setRenameMsgKind] = useState<"success" | "error" | null>(null);
 
   const { userId, user, teams, myTeamId, membersByTeam } = snap;
+
+  const myTeam = useMemo(() => {
+    if (!myTeamId) return null;
+    return teams.find((t) => t.id === myTeamId) ?? null;
+  }, [teams, myTeamId]);
+
+  const myTeamDisplayName = useMemo(() => {
+    if (!myTeamId) return null;
+    const clean = myTeam?.name?.trim();
+    return clean ? clean : `队伍 ${myTeamId}`;
+  }, [myTeam?.name, myTeamId]);
+
+  const currentTeamName = useMemo(() => (myTeam?.name ?? "").trim(), [myTeam?.name]);
+
+  useEffect(() => {
+    if (!myTeamId) {
+      setTeamNameDraft("");
+      setTeamNameDirty(false);
+      setRenameMsg(null);
+      setRenameMsgKind(null);
+      return;
+    }
+    if (!teamNameDirty) {
+      setTeamNameDraft((myTeam?.name ?? "").trim());
+    }
+  }, [myTeam?.name, myTeamId, teamNameDirty]);
 
   // --------------- Supabase Realtime Presence ---------------
 
@@ -230,6 +262,42 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
     await refreshOnce();
   }
 
+  async function renameTeam() {
+    if (!myTeamId) return;
+    const name = teamNameDraft.trim();
+
+    if (!name) {
+      setRenameMsg("队名不能为空");
+      setRenameMsgKind("error");
+      return;
+    }
+    if (name.length > 32) {
+      setRenameMsg("队名最多 32 字");
+      setRenameMsgKind("error");
+      return;
+    }
+
+    setRenameBusy(true);
+    setRenameMsg(null);
+    setRenameMsgKind(null);
+    const res = await fetch(`/api/teams/${myTeamId}/name`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ name }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setRenameBusy(false);
+    if (!res.ok) {
+      setRenameMsg(data?.message ?? "修改失败");
+      setRenameMsgKind("error");
+      return;
+    }
+    setTeamNameDirty(false);
+    setRenameMsg("队名已更新");
+    setRenameMsgKind("success");
+    await refreshOnce();
+  }
+
   // --------------- Render ---------------
 
   return (
@@ -244,18 +312,59 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
 
       {/* My team */}
       {my ? (
-        <div className="gala-card gala-card-highlight p-4 text-sm flex items-center justify-between">
-          <div>
-            <div className="font-medium text-red-primary">
-              🎯 你当前在队伍：{my.id}
+        <div className="gala-card gala-card-highlight p-4 text-sm space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="font-medium text-red-primary">
+                🎯 你当前在队伍：{myTeamDisplayName ?? my.id}
+              </div>
+              <div className="gala-muted text-xs mt-1">
+                队号：{my.id} · 人数：{(membersByTeam[my.id] ?? []).length}
+              </div>
             </div>
-            <div className="gala-muted text-xs mt-1">
-              人数：{(membersByTeam[my.id] ?? []).length}
-            </div>
+            <button disabled={busy === "leave"} className="gala-btn-outline" onClick={leave}>
+              {busy === "leave" ? "处理中..." : "退出队伍"}
+            </button>
           </div>
-          <button disabled={busy === "leave"} className="gala-btn-outline" onClick={leave}>
-            {busy === "leave" ? "处理中..." : "退出队伍"}
-          </button>
+
+          <div className="space-y-1.5">
+            <div className="text-xs font-medium text-foreground/70">队伍名称</div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                className="gala-input text-sm"
+                value={teamNameDraft}
+                onChange={(e) => {
+                  setTeamNameDraft(e.target.value);
+                  setTeamNameDirty(true);
+                  setRenameMsg(null);
+                  setRenameMsgKind(null);
+                }}
+                placeholder={`队伍 ${my.id}`}
+                maxLength={32}
+              />
+              <button
+                disabled={
+                  renameBusy ||
+                  !teamNameDraft.trim() ||
+                  teamNameDraft.trim().length > 32 ||
+                  teamNameDraft.trim() === currentTeamName
+                }
+                className="gala-btn text-xs sm:w-auto"
+                onClick={renameTeam}
+              >
+                {renameBusy ? "保存中..." : "保存队名"}
+              </button>
+            </div>
+            {renameMsg ? (
+              <div
+                className={`text-xs ${
+                  renameMsgKind === "success" ? "text-green-600" : "text-red-primary"
+                }`}
+              >
+                {renameMsg}
+              </div>
+            ) : null}
+          </div>
         </div>
       ) : (
         <div className="gala-card p-4 text-sm gala-muted">
@@ -280,6 +389,8 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
                 ? 1
                 : -1
           );
+          const teamName = t.name?.trim() ? t.name.trim() : `队伍 ${t.id}`;
+          const showId = !!t.name?.trim();
           const oRnd = allMembers.filter((m) => m.roleCategory === "RND").length;
           const oProduct = allMembers.filter((m) => m.roleCategory === "PRODUCT").length;
           const oGrowth = allMembers.filter((m) => m.roleCategory === "GROWTH").length;
@@ -292,7 +403,10 @@ export default function LobbyClient({ initial }: { initial: Snapshot }) {
               className={`gala-card p-4 space-y-2 ${isMine ? "gala-card-highlight" : ""}`}
             >
               <div className="flex items-center justify-between">
-                <div className="font-medium text-foreground">队伍 {t.id}</div>
+                <div className="font-medium text-foreground">
+                  {teamName}
+                  {showId ? <span className="ml-2 text-xs text-foreground/40">{t.id}</span> : null}
+                </div>
                 <div
                   className={`text-xs px-2 py-0.5 rounded-full ${
                     t.status === "locked"
